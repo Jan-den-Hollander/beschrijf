@@ -286,7 +286,7 @@ audio { width: 100%; margin-top: 12px; }
   </div>
 
   <details class="settings">
-    <summary>Instellingen — Gemini API-key</summary>
+    <summary>Instellingen — maak hier 1-malig je gratis Gemini API-key aan, nodig om de app te laten werken</summary>
     <div class="key-row">
       <input type="password" id="apiKeyInput" placeholder="AIza…">
       <button class="secondary" style="width:auto;margin:0;padding:9px 16px" onclick="saveKey()">Bewaar</button>
@@ -315,8 +315,12 @@ audio { width: 100%; margin-top: 12px; }
   <div class="card">
     <div class="card-label">1 · KIES EEN TEKST</div>
     <div class="text-choice" id="textChoice"></div>
-    <button class="secondary" style="margin-top:10px" onclick="toonEigenTekst()">✏️ Of voer zelf een tekst in</button>
+    <button class="text-btn" id="eigenTekstKnop" style="margin-top:10px" onclick="toonEigenTekst()">
+      <strong>✏️ Eigen tekst invoeren</strong>
+      <small>plak of typ een eigen tekst — bv. voor een klas of les</small>
+    </button>
     <div id="eigenTekstBlok" class="hidden" style="margin-top:12px">
+      <div style="font-size:0.72rem;color:var(--paper-dim);margin-bottom:8px">Vul hieronder titel, taal en tekst in ↓</div>
       <input type="text" id="eigenTitel" placeholder="Titel" style="width:100%;padding:9px 12px;background:var(--ink2);border:1px solid var(--rule);border-radius:3px;color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.85rem;margin-bottom:8px">
       <select id="eigenTaal" style="width:100%;padding:9px 12px;background:var(--ink2);border:1px solid var(--rule);border-radius:3px;color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.85rem;margin-bottom:8px">
         <option value="nl">Nederlands</option>
@@ -408,6 +412,7 @@ function kiesTekst(id) {
   huidigeTekst = TEKSTEN.find(t => t.id === id);
   document.querySelectorAll('.text-btn').forEach(b =>
     b.classList.toggle('selected', b.dataset.id === id));
+  document.getElementById('eigenTekstBlok').classList.add('hidden');
   toonTekst();
 }
 
@@ -436,7 +441,10 @@ function toonTekst() {
 }
 
 function toonEigenTekst() {
-  document.getElementById('eigenTekstBlok').classList.toggle('hidden');
+  document.querySelectorAll('.text-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('eigenTekstKnop').classList.add('selected');
+  document.getElementById('eigenTekstBlok').classList.remove('hidden');
+  document.getElementById('eigenTitel').focus();
 }
 
 function gebruikEigenTekst() {
@@ -500,6 +508,24 @@ function getKey() {
 // ── Beoordeling (tekst-call) ───────────────────────────────────────
 const TEXT_MODEL = 'gemini-flash-latest'; // stabiele alias, wijst altijd naar het actuele Flash-model
 
+// Automatische retry bij tijdelijke drukte/overbelasting bij Google
+async function metRetry(fn, onRetry, pogingen = 3) {
+  let laatsteFout;
+  for (let i = 0; i < pogingen; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      laatsteFout = e;
+      const tijdelijk = /overloaded|high demand|503|429|unavailable/i.test(e.message);
+      if (!tijdelijk || i === pogingen - 1) throw e;
+      const wacht = 1500 * Math.pow(2, i); // 1.5s, 3s, 6s
+      if (onRetry) onRetry(i + 1, pogingen, wacht);
+      await new Promise(r => setTimeout(r, wacht));
+    }
+  }
+  throw laatsteFout;
+}
+
 async function callGeminiText(prompt) {
   const apiKey = getKey();
   const resp = await fetch(
@@ -551,7 +577,10 @@ FEEDBACK: [2-4 zinnen, concreet: welke kernpunten zijn er, wat mist er of klopt 
 VERVOLGVRAAG: [één specifieke vraag over een klein detail uit de brontekst dat NIET in een generieke samenvatting zou staan — bv. een naam, kleur, geur, terloopse opmerking — om te checken of de tekst echt gelezen is]`;
 
   try {
-    const antwoord = await callGeminiText(prompt);
+    const antwoord = await metRetry(
+      () => callGeminiText(prompt),
+      (poging, totaal, wacht) => setStatusEl('statusBeoordeel', `⏳ Google heeft het druk — nieuwe poging ${poging}/${totaal} over ${Math.round(wacht/1000)}s…`, 'active')
+    );
     const scoreMatch = antwoord.match(/SCORE:\s*(\d+)/i);
     const feedbackMatch = antwoord.match(/FEEDBACK:\s*([\s\S]*?)VERVOLGVRAAG:/i);
     const vraagMatch = antwoord.match(/VERVOLGVRAAG:\s*([\s\S]*)/i);
@@ -592,7 +621,10 @@ async function beoordeelVervolg() {
   const prompt = `Brontekst:\n"""${huidigeTekst.tekst}"""\n\nVraag die gesteld is: "${laatsteBeoordeling.vervolgvraag}"\nAntwoord van de lezer: "${antwoordTekst}"\n\nKlopt dit antwoord met de brontekst? Antwoord in maximaal 2 zinnen, begin met "Klopt" of "Klopt niet" en leg kort uit waarom.`;
 
   try {
-    const resultaat = await callGeminiText(prompt);
+    const resultaat = await metRetry(
+      () => callGeminiText(prompt),
+      (poging, totaal, wacht) => setStatusEl('statusVervolg', `⏳ Even geduld, nieuwe poging ${poging}/${totaal}…`, 'active')
+    );
     setStatusEl('statusVervolg', '✅ ' + resultaat, resultaat.toLowerCase().startsWith('klopt niet') ? 'error' : 'done');
   } catch (e) {
     setStatusEl('statusVervolg', '❌ ' + e.message, 'error');
@@ -627,25 +659,30 @@ async function maakAudio() {
   try {
     for (let i = 0; i < chunks.length; i++) {
       setStatusEl('statusAudio', `⏳ Audio genereren… (${i+1}/${chunks.length})`, 'active');
-      const resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: chunks[i] }] }],
-            generationConfig: {
-              responseModalities: ['AUDIO'],
-              speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VASTE_STEM } } }
+      const data = await metRetry(
+        async () => {
+          const resp = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${apiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: chunks[i] }] }],
+                generationConfig: {
+                  responseModalities: ['AUDIO'],
+                  speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VASTE_STEM } } }
+                }
+              })
             }
-          })
-        }
+          );
+          if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(err?.error?.message || `HTTP-fout ${resp.status}`);
+          }
+          return resp.json();
+        },
+        (poging, totaal, wacht) => setStatusEl('statusAudio', `⏳ Google heeft het druk — nieuwe poging ${poging}/${totaal} (blok ${i+1}/${chunks.length})…`, 'active')
       );
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error(err?.error?.message || `HTTP-fout ${resp.status}`);
-      }
-      const data = await resp.json();
       const b64 = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
       if (!b64) throw new Error(`Geen audio voor blok ${i+1}.`);
       const pcm = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
