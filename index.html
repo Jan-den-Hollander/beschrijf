@@ -284,17 +284,22 @@ audio { width: 100%; margin-top: 12px; }
 
   <div class="header">
     <h1>Beschrijf 📖</h1>
-    <div class="tagline">lees · schrijf na · luister terug</div>
+    <div class="tagline" data-i18n="tagline">lees · schrijf na · luister terug</div>
+  </div>
+
+  <div class="card" style="padding:14px 14px 16px">
+    <div class="card-label" data-i18n="appTaalLabel">JOUW TAAL</div>
+    <div class="mode-toggle" id="appLangFilter" style="flex-wrap:wrap"></div>
   </div>
 
   <details class="settings">
-    <summary>Instellingen — maak hier 1-malig je gratis Gemini API-key aan, nodig om de app te laten werken</summary>
+    <summary data-i18n="settingsSummary">Instellingen — maak hier 1-malig je gratis Gemini API-key aan, nodig om de app te laten werken</summary>
     <div class="key-row">
       <input type="password" id="apiKeyInput" placeholder="AIza…">
-      <button class="secondary" style="width:auto;margin:0;padding:9px 16px" onclick="saveKey()">Bewaar</button>
+      <button class="secondary" style="width:auto;margin:0;padding:9px 16px" onclick="saveKey()" data-i18n="keySave">Bewaar</button>
     </div>
     <div class="key-status" id="keyStatus"></div>
-    <div class="key-note">
+    <div class="key-note" data-i18n="keyNote">
       Je eigen gratis Gemini API-key, aan te maken via
       <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#e8bc4a">aistudio.google.com/apikey</a>
       ("Create API key"). De key wordt alleen op dit toestel bewaard (localStorage) en gaat rechtstreeks van je
@@ -303,8 +308,8 @@ audio { width: 100%; margin-top: 12px; }
   </details>
 
   <div class="card" style="border-color:rgba(212,160,23,0.35)">
-    <div class="card-label">WAAROM DEZE APP</div>
-    <p style="font-size:0.85rem;line-height:1.6;color:var(--paper-dim)">
+    <div class="card-label" data-i18n="whyTitle">WAAROM DEZE APP</div>
+    <p style="font-size:0.85rem;line-height:1.6;color:var(--paper-dim)" data-i18n="whyBody">
       Begrijpend lezen holt achteruit — de PISA-onderzoeken laten dat al jaren zien. Wie een tekst niet goed
       kan doorgronden, loopt straks vast bij een bijsluiter, een handleiding of een officiële brief.
       Deze app oefent dat door je te laten <strong style="color:var(--mark2)">navertellen wat je gelezen hebt</strong> —
@@ -315,16 +320,16 @@ audio { width: 100%; margin-top: 12px; }
   </div>
 
   <div class="card">
-    <div class="card-label">1 · KIES EEN TAAL EN TEKST</div>
+    <div class="card-label" data-i18n="step1Label">1 · KIES EEN TAAL EN TEKST</div>
     <div class="mode-toggle" id="langFilter" style="flex-wrap:wrap"></div>
     <div class="text-choice" id="textChoice" style="margin-top:10px"></div>
     <button class="text-btn" id="eigenTekstKnop" style="margin-top:10px" onclick="toonEigenTekst()">
-      <strong>✏️ Eigen tekst invoeren</strong>
-      <small>plak of typ een eigen tekst — bv. voor een klas of les</small>
+      <strong data-i18n="ownTextTitle">✏️ Eigen tekst invoeren</strong>
+      <small data-i18n="ownTextSubtitle">plak of typ een eigen tekst — bv. voor een klas of les</small>
     </button>
     <div id="eigenTekstBlok" class="hidden" style="margin-top:12px">
-      <div style="font-size:0.72rem;color:var(--paper-dim);margin-bottom:8px">Vul hieronder titel, taal en tekst in ↓</div>
-      <input type="text" id="eigenTitel" placeholder="Titel" style="width:100%;padding:9px 12px;background:var(--ink2);border:1px solid var(--rule);border-radius:3px;color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.85rem;margin-bottom:8px">
+      <div style="font-size:0.72rem;color:var(--paper-dim);margin-bottom:8px" data-i18n="ownTextHint">Vul hieronder titel, taal en tekst in ↓</div>
+      <input type="text" id="eigenTitel" data-i18n-placeholder="titleFieldPlaceholder" placeholder="Titel" style="width:100%;padding:9px 12px;background:var(--ink2);border:1px solid var(--rule);border-radius:3px;color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.85rem;margin-bottom:8px">
       <select id="eigenTaal" style="width:100%;padding:9px 12px;background:var(--ink2);border:1px solid var(--rule);border-radius:3px;color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.85rem;margin-bottom:8px">
         <option value="nl">Nederlands</option>
         <option value="en">Engels</option>
@@ -333,43 +338,44 @@ audio { width: 100%; margin-top: 12px; }
         <option value="es">Spaans</option>
         <option value="it">Italiaans</option>
       </select>
-      <textarea id="eigenTekstInhoud" placeholder="Plak of typ hier de tekst die gelezen en beschreven moet worden…" style="min-height:120px"></textarea>
-      <button class="primary" onclick="gebruikEigenTekst()">Gebruik deze tekst</button>
+      <textarea id="eigenTekstInhoud" data-i18n-placeholder="ownTextAreaPlaceholder" placeholder="Plak of typ hier de tekst die gelezen en beschreven moet worden…" style="min-height:120px"></textarea>
+      <button class="primary" onclick="gebruikEigenTekst()" data-i18n="useOwnTextBtn">Gebruik deze tekst</button>
     </div>
   </div>
 
+
   <div class="card hidden" id="readingCard">
-    <div class="card-label">LEES</div>
+    <div class="card-label" data-i18n="readLabel">LEES</div>
     <div class="reading" id="readingText"></div>
   </div>
 
   <div class="card hidden" id="writeCard">
-    <div class="card-label">2 · BESCHRIJF HET VERHAAL IN EIGEN WOORDEN</div>
+    <div class="card-label" data-i18n="step2Label">2 · BESCHRIJF HET VERHAAL IN EIGEN WOORDEN</div>
     <div class="mode-toggle" id="modeToggle"></div>
-    <textarea id="beschrijving" placeholder="Typ hier je beschrijving…" style="margin-top:12px" oninput="updateWoordenteller()"></textarea>
+    <textarea id="beschrijving" data-i18n-placeholder="writePlaceholder" placeholder="Typ hier je beschrijving…" style="margin-top:12px" oninput="updateWoordenteller()"></textarea>
     <div id="woordenteller" style="font-size:0.72rem;color:var(--paper-dim);margin-top:4px"></div>
-    <button class="primary" id="beoordeelBtn" onclick="beoordeel()">Laat beoordelen</button>
+    <button class="primary" id="beoordeelBtn" onclick="beoordeel()" data-i18n="assessBtn">Laat beoordelen</button>
     <div class="status" id="statusBeoordeel"></div>
   </div>
 
   <div class="card hidden" id="resultCard">
-    <div class="card-label">BEOORDELING</div>
+    <div class="card-label" data-i18n="resultLabel">BEOORDELING</div>
     <div id="scoreBadge"></div>
     <div class="beoordeling" id="beoordelingTekst"></div>
     <div class="vervolgvraag hidden" id="vervolgBlok">
       <p id="vervolgvraagTekst"></p>
-      <textarea id="vervolgAntwoord" placeholder="Je antwoord…" style="min-height:70px"></textarea>
-      <button class="primary" id="vervolgBtn" onclick="beoordeelVervolg()">Antwoord versturen</button>
+      <textarea id="vervolgAntwoord" data-i18n-placeholder="followupPlaceholder" placeholder="Je antwoord…" style="min-height:70px"></textarea>
+      <button class="primary" id="vervolgBtn" onclick="beoordeelVervolg()" data-i18n="followupBtn">Antwoord versturen</button>
       <div class="status" id="statusVervolg"></div>
     </div>
   </div>
 
   <div class="card hidden" id="audioCard">
-    <div class="card-label">3 · LUISTERBOEK VAN JE BESCHRIJVING</div>
-    <button class="secondary" id="ttsBtn" onclick="maakAudio()">🔊 Maak mp3</button>
+    <div class="card-label" data-i18n="step3Label">3 · LUISTERBOEK VAN JE BESCHRIJVING</div>
+    <button class="secondary" id="ttsBtn" onclick="maakAudio()" data-i18n="ttsBtn">🔊 Maak mp3</button>
     <div class="status" id="statusAudio"></div>
     <audio id="audioPlayer" controls class="hidden"></audio>
-    <button class="secondary hidden" id="downloadBtn" onclick="downloadAudio()">⬇ Download mp3</button>
+    <button class="secondary hidden" id="downloadBtn" onclick="downloadAudio()" data-i18n="downloadBtn">⬇ Download mp3</button>
   </div>
 
 </div>
@@ -429,6 +435,335 @@ Un giorno Anselmo non venne. Il banco rimase chiuso, le casse vuote impilate una
 
 const TAAL_LABELS = { nl: 'Nederlands', en: 'English', de: 'Deutsch', fr: 'Fran\u00e7ais', es: 'Espa\u00f1ol', it: 'Italiano' };
 const TAAL_VLAG   = { nl: '\ud83c\uddf3\ud83c\uddf1', en: '\ud83c\uddec\ud83c\udde7', de: '\ud83c\udde9\ud83c\uddea', fr: '\ud83c\uddeb\ud83c\uddf7', es: '\ud83c\uddea\ud83c\uddf8', it: '\ud83c\uddee\ud83c\uddf9' };
+
+// ── UI-vertalingen: dit lint bepaalt UITSLUITEND de interfacetaal (jouw moedertaal), ──
+// ── los van het tekst-taal-lint hieronder dat bepaalt welke leestekst getoond wordt ──
+const UI_TR = {
+  nl: {
+    tagline: 'lees · schrijf na · luister terug',
+    appTaalLabel: 'JOUW TAAL',
+    settingsSummary: 'Instellingen — maak hier 1-malig je gratis Gemini API-key aan, nodig om de app te laten werken',
+    keySave: 'Bewaar',
+    keyNote: 'Je eigen gratis Gemini API-key, aan te maken via <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#e8bc4a">aistudio.google.com/apikey</a> ("Create API key"). De key wordt alleen op dit toestel bewaard (localStorage) en gaat rechtstreeks van je browser naar Google — nooit via een server van deze app.',
+    whyTitle: 'WAAROM DEZE APP',
+    whyBody: 'Begrijpend lezen holt achteruit — de PISA-onderzoeken laten dat al jaren zien. Wie een tekst niet goed kan doorgronden, loopt straks vast bij een bijsluiter, een handleiding of een officiële brief. Deze app oefent dat door je te laten <strong style="color:var(--mark2)">navertellen wat je gelezen hebt</strong> — pas als je iets in eigen woorden kunt uitleggen, heb je het echt begrepen. Kies je een tekst in een vreemde taal, dan oefen je meteen ook die taal — handig als extra oefenstof naast bijvoorbeeld de Franse of Duitse les.',
+    step1Label: '1 · KIES EEN TAAL EN TEKST',
+    ownTextTitle: '✏️ Eigen tekst invoeren',
+    ownTextSubtitle: 'plak of typ een eigen tekst — bv. voor een klas of les',
+    ownTextHint: 'Vul hieronder titel, taal en tekst in ↓',
+    titleFieldPlaceholder: 'Titel',
+    ownTextAreaPlaceholder: 'Plak of typ hier de tekst die gelezen en beschreven moet worden…',
+    useOwnTextBtn: 'Gebruik deze tekst',
+    readLabel: 'LEES',
+    step2Label: '2 · BESCHRIJF HET VERHAAL IN EIGEN WOORDEN',
+    writePlaceholder: 'Typ hier je beschrijving…',
+    assessBtn: 'Laat beoordelen',
+    resultLabel: 'BEOORDELING',
+    followupPlaceholder: 'Je antwoord…',
+    followupBtn: 'Antwoord versturen',
+    step3Label: '3 · LUISTERBOEK VAN JE BESCHRIJVING',
+    ttsBtn: '🔊 Maak mp3',
+    downloadBtn: '⬇ Download mp3',
+    ownTextDefault: 'Eigen tekst',
+    modeNl: 'Beschrijf in het Nederlands',
+    modeForeign: t => `Beschrijf in het ${t}`,
+    wordCounter: (n, min, max) => `${n} woorden — richtlijn: ${min}–${max} woorden`,
+    keyTooShort: '⚠️ Key lijkt te kort — controleer of je hem volledig geplakt hebt.',
+    keySavedOk: '✅ Key bewaard op dit toestel.',
+    errNoKey: '⚠️ Vul eerst je API-key in bij Instellingen.',
+    errNoDescription: '⚠️ Schrijf eerst je beschrijving.',
+    errNoText: '⚠️ Kies eerst een tekst.',
+    statusAssessing: '⏳ Gemini beoordeelt je beschrijving…',
+    retryAssess: (p, t, w) => `⏳ Google heeft het druk — nieuwe poging ${p}/${t} over ${w}s…`,
+    scoreLabel: s => `Score: ${s}/10`,
+    statusAssessed: '✅ Beoordeeld.',
+    statusFollowupChecking: '⏳ Wordt gecontroleerd…',
+    retryFollowup: (p, t) => `⏳ Even geduld, nieuwe poging ${p}/${t}…`,
+    errNoKeyShort: '⚠️ Vul eerst je API-key in.',
+    statusAudioGenerating: '⏳ Gemini AI maakt het audiofragment…',
+    statusAudioChunk: (i, n) => `⏳ Audio genereren… (${i}/${n})`,
+    retryAudio: (p, t, i, n) => `⏳ Google heeft het druk — nieuwe poging ${p}/${t} (blok ${i}/${n})…`,
+    statusAudioDone: '✅ Klaar.',
+    downloadingMp3: '⏳ Omzetten naar mp3…',
+    downloadBtnLabel: '⬇ Download mp3'
+  },
+  en: {
+    tagline: 'read · retell · listen back',
+    appTaalLabel: 'YOUR LANGUAGE',
+    settingsSummary: 'Settings — create your free Gemini API key here (one-time), needed to make the app work',
+    keySave: 'Save',
+    keyNote: 'Your own free Gemini API key, get one at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#e8bc4a">aistudio.google.com/apikey</a> ("Create API key"). The key is only stored on this device (localStorage) and goes straight from your browser to Google — never through a server of this app.',
+    whyTitle: 'WHY THIS APP',
+    whyBody: 'Reading comprehension is declining — PISA studies have shown this for years. Someone who can\u2019t really grasp a text will eventually struggle with a leaflet, a manual or an official letter. This app trains that by having you <strong style="color:var(--mark2)">retell what you read</strong> — only once you can explain something in your own words have you truly understood it. Pick a text in a foreign language and you practise that language too — handy alongside, say, your French or German class.',
+    step1Label: '1 · PICK A LANGUAGE AND TEXT',
+    ownTextTitle: '✏️ Enter your own text',
+    ownTextSubtitle: 'paste or type a text of your own — e.g. for a class or lesson',
+    ownTextHint: 'Fill in title, language and text below ↓',
+    titleFieldPlaceholder: 'Title',
+    ownTextAreaPlaceholder: 'Paste or type the text that should be read and retold…',
+    useOwnTextBtn: 'Use this text',
+    readLabel: 'READ',
+    step2Label: '2 · RETELL THE STORY IN YOUR OWN WORDS',
+    writePlaceholder: 'Type your retelling here…',
+    assessBtn: 'Get feedback',
+    resultLabel: 'FEEDBACK',
+    followupPlaceholder: 'Your answer…',
+    followupBtn: 'Submit answer',
+    step3Label: '3 · AUDIOBOOK OF YOUR RETELLING',
+    ttsBtn: '🔊 Create mp3',
+    downloadBtn: '⬇ Download mp3',
+    ownTextDefault: 'Own text',
+    modeNl: 'Retell in Dutch',
+    modeForeign: t => `Retell in ${t}`,
+    wordCounter: (n, min, max) => `${n} words — target: ${min}–${max} words`,
+    keyTooShort: '⚠️ Key looks too short — check you pasted it in full.',
+    keySavedOk: '✅ Key saved on this device.',
+    errNoKey: '⚠️ Enter your API key in Settings first.',
+    errNoDescription: '⚠️ Write your retelling first.',
+    errNoText: '⚠️ Pick a text first.',
+    statusAssessing: '⏳ Gemini is assessing your retelling…',
+    retryAssess: (p, t, w) => `⏳ Google is busy — retry ${p}/${t} in ${w}s…`,
+    scoreLabel: s => `Score: ${s}/10`,
+    statusAssessed: '✅ Assessed.',
+    statusFollowupChecking: '⏳ Checking…',
+    retryFollowup: (p, t) => `⏳ One moment, retry ${p}/${t}…`,
+    errNoKeyShort: '⚠️ Enter your API key first.',
+    statusAudioGenerating: '⏳ Gemini AI is creating the audio…',
+    statusAudioChunk: (i, n) => `⏳ Generating audio… (${i}/${n})`,
+    retryAudio: (p, t, i, n) => `⏳ Google is busy — retry ${p}/${t} (block ${i}/${n})…`,
+    statusAudioDone: '✅ Done.',
+    downloadingMp3: '⏳ Converting to mp3…',
+    downloadBtnLabel: '⬇ Download mp3'
+  },
+  de: {
+    tagline: 'lesen · nacherzählen · anhören',
+    appTaalLabel: 'DEINE SPRACHE',
+    settingsSummary: 'Einstellungen — hier einmalig deinen kostenlosen Gemini API-Key anlegen, wird zum Betrieb der App benötigt',
+    keySave: 'Speichern',
+    keyNote: 'Dein eigener kostenloser Gemini API-Key, zu erstellen unter <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#e8bc4a">aistudio.google.com/apikey</a> ("Create API key"). Der Key wird nur auf diesem Gerät gespeichert (localStorage) und geht direkt von deinem Browser zu Google — nie über einen Server dieser App.',
+    whyTitle: 'WARUM DIESE APP',
+    whyBody: 'Das Leseverständnis nimmt ab — das zeigen die PISA-Studien seit Jahren. Wer einen Text nicht wirklich durchdringt, scheitert später an einem Beipackzettel, einer Anleitung oder einem amtlichen Brief. Diese App übt das, indem du <strong style="color:var(--mark2)">nacherzählst, was du gelesen hast</strong> — erst wenn du etwas mit eigenen Worten erklären kannst, hast du es wirklich verstanden. Wählst du einen Text in einer Fremdsprache, übst du gleichzeitig diese Sprache — praktisch als Zusatzübung z. B. zum Französisch- oder Englischunterricht.',
+    step1Label: '1 · SPRACHE UND TEXT AUSWÄHLEN',
+    ownTextTitle: '✏️ Eigenen Text eingeben',
+    ownTextSubtitle: 'einen eigenen Text einfügen oder tippen — z. B. für eine Klasse oder Unterrichtsstunde',
+    ownTextHint: 'Unten Titel, Sprache und Text ausfüllen ↓',
+    titleFieldPlaceholder: 'Titel',
+    ownTextAreaPlaceholder: 'Hier den Text einfügen oder eintippen, der gelesen und nacherzählt werden soll…',
+    useOwnTextBtn: 'Diesen Text verwenden',
+    readLabel: 'LESEN',
+    step2Label: '2 · ERZÄHLE DIE GESCHICHTE MIT EIGENEN WORTEN NACH',
+    writePlaceholder: 'Tippe hier deine Nacherzählung…',
+    assessBtn: 'Bewerten lassen',
+    resultLabel: 'BEWERTUNG',
+    followupPlaceholder: 'Deine Antwort…',
+    followupBtn: 'Antwort senden',
+    step3Label: '3 · HÖRBUCH DEINER NACHERZÄHLUNG',
+    ttsBtn: '🔊 MP3 erstellen',
+    downloadBtn: '⬇ MP3 herunterladen',
+    ownTextDefault: 'Eigener Text',
+    modeNl: 'Auf Niederländisch nacherzählen',
+    modeForeign: t => `Auf ${t} nacherzählen`,
+    wordCounter: (n, min, max) => `${n} Wörter — Richtwert: ${min}–${max} Wörter`,
+    keyTooShort: '⚠️ Key scheint zu kurz — prüfe, ob du ihn vollständig eingefügt hast.',
+    keySavedOk: '✅ Key auf diesem Gerät gespeichert.',
+    errNoKey: '⚠️ Trage zuerst deinen API-Key in den Einstellungen ein.',
+    errNoDescription: '⚠️ Schreibe zuerst deine Nacherzählung.',
+    errNoText: '⚠️ Wähle zuerst einen Text.',
+    statusAssessing: '⏳ Gemini bewertet deine Nacherzählung…',
+    retryAssess: (p, t, w) => `⏳ Google ist ausgelastet — neuer Versuch ${p}/${t} in ${w}s…`,
+    scoreLabel: s => `Punkte: ${s}/10`,
+    statusAssessed: '✅ Bewertet.',
+    statusFollowupChecking: '⏳ Wird geprüft…',
+    retryFollowup: (p, t) => `⏳ Einen Moment, neuer Versuch ${p}/${t}…`,
+    errNoKeyShort: '⚠️ Trage zuerst deinen API-Key ein.',
+    statusAudioGenerating: '⏳ Gemini AI erstellt das Audio…',
+    statusAudioChunk: (i, n) => `⏳ Audio wird erstellt… (${i}/${n})`,
+    retryAudio: (p, t, i, n) => `⏳ Google ist ausgelastet — neuer Versuch ${p}/${t} (Block ${i}/${n})…`,
+    statusAudioDone: '✅ Fertig.',
+    downloadingMp3: '⏳ Wird in MP3 umgewandelt…',
+    downloadBtnLabel: '⬇ MP3 herunterladen'
+  },
+  fr: {
+    tagline: 'lire · raconter · réécouter',
+    appTaalLabel: 'TA LANGUE',
+    settingsSummary: 'Paramètres — crée ici, une seule fois, ta clé API Gemini gratuite, nécessaire au fonctionnement de l\u2019application',
+    keySave: 'Enregistrer',
+    keyNote: 'Ta propre clé API Gemini gratuite, à créer sur <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#e8bc4a">aistudio.google.com/apikey</a> ("Create API key"). La clé est conservée uniquement sur cet appareil (localStorage) et va directement de ton navigateur à Google — jamais via un serveur de cette application.',
+    whyTitle: 'POURQUOI CETTE APPLICATION',
+    whyBody: 'La compréhension de lecture décline — les études PISA le montrent depuis des années. Qui ne parvient pas à bien saisir un texte finira par avoir du mal avec une notice, un mode d\u2019emploi ou un courrier officiel. Cette application entraîne cela en te faisant <strong style="color:var(--mark2)">raconter ce que tu as lu</strong> — ce n\u2019est qu\u2019en expliquant quelque chose avec tes propres mots que tu l\u2019as vraiment compris. Choisis un texte dans une langue étrangère et tu t\u2019exerces aussi dans cette langue — pratique en plus, par exemple, de ton cours d\u2019allemand ou d\u2019anglais.',
+    step1Label: '1 · CHOISIS UNE LANGUE ET UN TEXTE',
+    ownTextTitle: '✏️ Saisir ton propre texte',
+    ownTextSubtitle: 'colle ou tape un texte — par ex. pour une classe ou un cours',
+    ownTextHint: 'Remplis ci-dessous le titre, la langue et le texte ↓',
+    titleFieldPlaceholder: 'Titre',
+    ownTextAreaPlaceholder: 'Colle ou tape ici le texte à lire et à raconter…',
+    useOwnTextBtn: 'Utiliser ce texte',
+    readLabel: 'LIRE',
+    step2Label: '2 · RACONTE L\u2019HISTOIRE AVEC TES PROPRES MOTS',
+    writePlaceholder: 'Tape ici ton récit…',
+    assessBtn: 'Faire évaluer',
+    resultLabel: 'ÉVALUATION',
+    followupPlaceholder: 'Ta réponse…',
+    followupBtn: 'Envoyer la réponse',
+    step3Label: '3 · LIVRE AUDIO DE TON RÉCIT',
+    ttsBtn: '🔊 Créer le mp3',
+    downloadBtn: '⬇ Télécharger le mp3',
+    ownTextDefault: 'Texte personnel',
+    modeNl: 'Raconter en néerlandais',
+    modeForeign: t => `Raconter en ${t}`,
+    wordCounter: (n, min, max) => `${n} mots — repère : ${min}–${max} mots`,
+    keyTooShort: '⚠️ La clé semble trop courte — vérifie que tu l\u2019as collée en entier.',
+    keySavedOk: '✅ Clé enregistrée sur cet appareil.',
+    errNoKey: '⚠️ Renseigne d\u2019abord ta clé API dans les paramètres.',
+    errNoDescription: '⚠️ Écris d\u2019abord ton récit.',
+    errNoText: '⚠️ Choisis d\u2019abord un texte.',
+    statusAssessing: '⏳ Gemini évalue ton récit…',
+    retryAssess: (p, t, w) => `⏳ Google est occupé — nouvel essai ${p}/${t} dans ${w}s…`,
+    scoreLabel: s => `Score : ${s}/10`,
+    statusAssessed: '✅ Évalué.',
+    statusFollowupChecking: '⏳ Vérification en cours…',
+    retryFollowup: (p, t) => `⏳ Un instant, nouvel essai ${p}/${t}…`,
+    errNoKeyShort: '⚠️ Renseigne d\u2019abord ta clé API.',
+    statusAudioGenerating: '⏳ Gemini AI crée le fichier audio…',
+    statusAudioChunk: (i, n) => `⏳ Création de l\u2019audio… (${i}/${n})`,
+    retryAudio: (p, t, i, n) => `⏳ Google est occupé — nouvel essai ${p}/${t} (bloc ${i}/${n})…`,
+    statusAudioDone: '✅ Terminé.',
+    downloadingMp3: '⏳ Conversion en mp3…',
+    downloadBtnLabel: '⬇ Télécharger le mp3'
+  },
+  es: {
+    tagline: 'lee · vuelve a contar · escucha',
+    appTaalLabel: 'TU IDIOMA',
+    settingsSummary: 'Ajustes — crea aquí, una sola vez, tu clave API de Gemini gratuita, necesaria para que la app funcione',
+    keySave: 'Guardar',
+    keyNote: 'Tu propia clave API de Gemini gratuita, se crea en <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#e8bc4a">aistudio.google.com/apikey</a> ("Create API key"). La clave se guarda solo en este dispositivo (localStorage) y va directamente de tu navegador a Google — nunca a través de un servidor de esta app.',
+    whyTitle: 'POR QUÉ ESTA APP',
+    whyBody: 'La comprensión lectora está disminuyendo — los estudios PISA lo muestran desde hace años. Quien no logra comprender bien un texto acabará teniendo problemas con un prospecto, un manual o una carta oficial. Esta app entrena eso haciéndote <strong style="color:var(--mark2)">contar de nuevo lo que has leído</strong> — solo cuando puedes explicar algo con tus propias palabras lo has entendido de verdad. Si eliges un texto en un idioma extranjero, practicas también ese idioma — útil, por ejemplo, junto a tu clase de francés o alemán.',
+    step1Label: '1 · ELIGE UN IDIOMA Y UN TEXTO',
+    ownTextTitle: '✏️ Introducir tu propio texto',
+    ownTextSubtitle: 'pega o escribe un texto propio — p. ej. para una clase',
+    ownTextHint: 'Completa abajo el título, el idioma y el texto ↓',
+    titleFieldPlaceholder: 'Título',
+    ownTextAreaPlaceholder: 'Pega o escribe aquí el texto que se debe leer y contar de nuevo…',
+    useOwnTextBtn: 'Usar este texto',
+    readLabel: 'LEE',
+    step2Label: '2 · CUENTA LA HISTORIA CON TUS PROPIAS PALABRAS',
+    writePlaceholder: 'Escribe aquí tu relato…',
+    assessBtn: 'Evaluar',
+    resultLabel: 'EVALUACIÓN',
+    followupPlaceholder: 'Tu respuesta…',
+    followupBtn: 'Enviar respuesta',
+    step3Label: '3 · AUDIOLIBRO DE TU RELATO',
+    ttsBtn: '🔊 Crear mp3',
+    downloadBtn: '⬇ Descargar mp3',
+    ownTextDefault: 'Texto propio',
+    modeNl: 'Contar en neerlandés',
+    modeForeign: t => `Contar en ${t}`,
+    wordCounter: (n, min, max) => `${n} palabras — orientativo: ${min}–${max} palabras`,
+    keyTooShort: '⚠️ La clave parece demasiado corta — comprueba que la has pegado entera.',
+    keySavedOk: '✅ Clave guardada en este dispositivo.',
+    errNoKey: '⚠️ Introduce primero tu clave API en Ajustes.',
+    errNoDescription: '⚠️ Escribe primero tu relato.',
+    errNoText: '⚠️ Elige primero un texto.',
+    statusAssessing: '⏳ Gemini está evaluando tu relato…',
+    retryAssess: (p, t, w) => `⏳ Google está saturado — nuevo intento ${p}/${t} en ${w}s…`,
+    scoreLabel: s => `Puntuación: ${s}/10`,
+    statusAssessed: '✅ Evaluado.',
+    statusFollowupChecking: '⏳ Comprobando…',
+    retryFollowup: (p, t) => `⏳ Un momento, nuevo intento ${p}/${t}…`,
+    errNoKeyShort: '⚠️ Introduce primero tu clave API.',
+    statusAudioGenerating: '⏳ Gemini AI está creando el audio…',
+    statusAudioChunk: (i, n) => `⏳ Generando audio… (${i}/${n})`,
+    retryAudio: (p, t, i, n) => `⏳ Google está saturado — nuevo intento ${p}/${t} (bloque ${i}/${n})…`,
+    statusAudioDone: '✅ Listo.',
+    downloadingMp3: '⏳ Convirtiendo a mp3…',
+    downloadBtnLabel: '⬇ Descargar mp3'
+  },
+  it: {
+    tagline: 'leggi · racconta · riascolta',
+    appTaalLabel: 'LA TUA LINGUA',
+    settingsSummary: 'Impostazioni — crea qui, una sola volta, la tua chiave API Gemini gratuita, necessaria per far funzionare l\u2019app',
+    keySave: 'Salva',
+    keyNote: 'La tua chiave API Gemini gratuita, da creare su <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#e8bc4a">aistudio.google.com/apikey</a> ("Create API key"). La chiave viene salvata solo su questo dispositivo (localStorage) e va direttamente dal tuo browser a Google — mai tramite un server di questa app.',
+    whyTitle: 'PERCHÉ QUESTA APP',
+    whyBody: 'La comprensione del testo sta peggiorando — le indagini PISA lo mostrano da anni. Chi non riesce a capire davvero un testo, in seguito farà fatica con un foglietto illustrativo, un manuale o una lettera ufficiale. Questa app allena proprio questo, facendoti <strong style="color:var(--mark2)">raccontare ciò che hai letto</strong> — solo quando sai spiegare qualcosa con parole tue l\u2019hai davvero capito. Scegliendo un testo in lingua straniera, ne fai anche pratica linguistica — utile, ad esempio, accanto alle lezioni di francese o inglese.',
+    step1Label: '1 · SCEGLI UNA LINGUA E UN TESTO',
+    ownTextTitle: '✏️ Inserisci un tuo testo',
+    ownTextSubtitle: 'incolla o digita un tuo testo — ad es. per una classe o una lezione',
+    ownTextHint: 'Compila qui sotto titolo, lingua e testo ↓',
+    titleFieldPlaceholder: 'Titolo',
+    ownTextAreaPlaceholder: 'Incolla o digita qui il testo da leggere e raccontare…',
+    useOwnTextBtn: 'Usa questo testo',
+    readLabel: 'LEGGI',
+    step2Label: '2 · RACCONTA LA STORIA CON PAROLE TUE',
+    writePlaceholder: 'Scrivi qui il tuo racconto…',
+    assessBtn: 'Fai valutare',
+    resultLabel: 'VALUTAZIONE',
+    followupPlaceholder: 'La tua risposta…',
+    followupBtn: 'Invia risposta',
+    step3Label: '3 · AUDIOLIBRO DEL TUO RACCONTO',
+    ttsBtn: '🔊 Crea mp3',
+    downloadBtn: '⬇ Scarica mp3',
+    ownTextDefault: 'Testo personale',
+    modeNl: 'Racconta in olandese',
+    modeForeign: t => `Racconta in ${t}`,
+    wordCounter: (n, min, max) => `${n} parole — indicazione: ${min}–${max} parole`,
+    keyTooShort: '⚠️ La chiave sembra troppo corta — controlla di averla incollata per intero.',
+    keySavedOk: '✅ Chiave salvata su questo dispositivo.',
+    errNoKey: '⚠️ Inserisci prima la tua chiave API nelle Impostazioni.',
+    errNoDescription: '⚠️ Scrivi prima il tuo racconto.',
+    errNoText: '⚠️ Scegli prima un testo.',
+    statusAssessing: '⏳ Gemini sta valutando il tuo racconto…',
+    retryAssess: (p, t, w) => `⏳ Google è occupato — nuovo tentativo ${p}/${t} tra ${w}s…`,
+    scoreLabel: s => `Punteggio: ${s}/10`,
+    statusAssessed: '✅ Valutato.',
+    statusFollowupChecking: '⏳ Verifica in corso…',
+    retryFollowup: (p, t) => `⏳ Un attimo, nuovo tentativo ${p}/${t}…`,
+    errNoKeyShort: '⚠️ Inserisci prima la tua chiave API.',
+    statusAudioGenerating: '⏳ Gemini AI sta creando l\u2019audio…',
+    statusAudioChunk: (i, n) => `⏳ Generazione audio… (${i}/${n})`,
+    retryAudio: (p, t, i, n) => `⏳ Google è occupato — nuovo tentativo ${p}/${t} (blocco ${i}/${n})…`,
+    statusAudioDone: '✅ Fatto.',
+    downloadingMp3: '⏳ Conversione in mp3…',
+    downloadBtnLabel: '⬇ Scarica mp3'
+  }
+};
+
+let uiLang = localStorage.getItem('beschrijf_ui_lang') || 'nl';
+
+function T(key, ...args) {
+  const dict = UI_TR[uiLang] || UI_TR.nl;
+  const val = dict[key] !== undefined ? dict[key] : UI_TR.nl[key];
+  return typeof val === 'function' ? val(...args) : val;
+}
+
+function initAppLangFilter() {
+  const el = document.getElementById('appLangFilter');
+  const talen = Object.keys(TAAL_LABELS);
+  el.innerHTML = talen.map(t => `
+    <button class="mode-btn${t === uiLang ? ' active' : ''}" data-taal="${t}" onclick="setUiTaal('${t}')">
+      ${TAAL_VLAG[t]} ${TAAL_LABELS[t]}
+    </button>
+  `).join('');
+}
+
+function setUiTaal(taal) {
+  uiLang = taal;
+  localStorage.setItem('beschrijf_ui_lang', taal);
+  document.querySelectorAll('#appLangFilter .mode-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.taal === taal));
+  document.documentElement.lang = taal;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.innerHTML = T(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = T(el.dataset.i18nPlaceholder);
+  });
+
+  if (huidigeTekst) { renderModeToggle(); updateWoordenteller(); }
+}
+
 let gekozenTaalFilter = 'nl';
 
 let huidigeTekst = null;
@@ -485,18 +820,22 @@ function toonTekst() {
   document.getElementById('audioCard').classList.add('hidden');
   document.getElementById('beschrijving').value = '';
   updateWoordenteller();
+  renderModeToggle();
+}
 
-  // Modus-keuze: NL of brontaal (alleen tonen als brontaal niet NL is)
+// Modus-keuze: eigen taal (app-taal) of brontaal — alleen tonen als de tekst niet al in je eigen taal is
+function renderModeToggle() {
   const modeEl = document.getElementById('modeToggle');
-  if (huidigeTekst.taal === 'nl') {
-    schrijfTaal = 'nl';
+  if (huidigeTekst.taal === uiLang) {
+    schrijfTaal = uiLang;
     modeEl.innerHTML = '';
   } else {
-    schrijfTaal = 'nl';
-    const label = huidigeTekst.taal === 'it' ? 'Italiaans' : huidigeTekst.taal.toUpperCase();
+    schrijfTaal = uiLang;
+    const eigenLabel = TAAL_LABELS[uiLang] || uiLang.toUpperCase();
+    const bronLabel = TAAL_LABELS[huidigeTekst.taal] || huidigeTekst.taal.toUpperCase();
     modeEl.innerHTML = `
-      <button class="mode-btn active" data-lang="nl" onclick="zetModus('nl')">Beschrijf in het Nederlands</button>
-      <button class="mode-btn" data-lang="${huidigeTekst.taal}" onclick="zetModus('${huidigeTekst.taal}')">Beschrijf in het ${label}</button>
+      <button class="mode-btn active" data-lang="${uiLang}" onclick="zetModus('${uiLang}')">${T('modeForeign', eigenLabel)}</button>
+      <button class="mode-btn" data-lang="${huidigeTekst.taal}" onclick="zetModus('${huidigeTekst.taal}')">${T('modeForeign', bronLabel)}</button>
     `;
   }
 }
@@ -509,7 +848,7 @@ function toonEigenTekst() {
 }
 
 function gebruikEigenTekst() {
-  const titel = document.getElementById('eigenTitel').value.trim() || 'Eigen tekst';
+  const titel = document.getElementById('eigenTitel').value.trim() || T('ownTextDefault');
   const taal = document.getElementById('eigenTaal').value;
   const tekst = document.getElementById('eigenTekstInhoud').value.trim();
   if (!tekst) return;
@@ -537,7 +876,7 @@ function updateWoordenteller() {
   const aantal = tekst ? tekst.split(/\s+/).length : 0;
   const { min, max } = woordenDoel();
   const el = document.getElementById('woordenteller');
-  el.textContent = `${aantal} woorden — richtlijn: ${min}–${max} woorden`;
+  el.textContent = T('wordCounter', aantal, min, max);
   el.style.color = (aantal >= min && aantal <= max) ? 'var(--sage2)' : 'var(--paper-dim)';
 }
 
@@ -548,14 +887,14 @@ function loadKey() {
   const k = localStorage.getItem(KEY_STORE);
   if (k) {
     document.getElementById('apiKeyInput').value = k;
-    setKeyStatus('✅ Key bewaard op dit toestel.', 'ok');
+    setKeyStatus(T('keySavedOk'), 'ok');
   }
 }
 function saveKey() {
   const k = document.getElementById('apiKeyInput').value.trim();
-  if (k.length < 20) { setKeyStatus('⚠️ Key lijkt te kort — controleer of je hem volledig geplakt hebt.', 'err'); return; }
+  if (k.length < 20) { setKeyStatus(T('keyTooShort'), 'err'); return; }
   localStorage.setItem(KEY_STORE, k);
-  setKeyStatus('✅ Key bewaard op dit toestel.', 'ok');
+  setKeyStatus(T('keySavedOk'), 'ok');
 }
 function setKeyStatus(msg, cls) {
   const el = document.getElementById('keyStatus');
@@ -610,19 +949,20 @@ async function callGeminiText(prompt) {
 async function beoordeel() {
   const apiKey = getKey();
   if (!apiKey) {
-    setStatusEl('statusBeoordeel', '⚠️ Vul eerst je API-key in bij Instellingen.', 'error');
+    setStatusEl('statusBeoordeel', T('errNoKey'), 'error');
     document.querySelector('details.settings').open = true;
     return;
   }
   const beschrijving = document.getElementById('beschrijving').value.trim();
-  if (!beschrijving) { setStatusEl('statusBeoordeel', '⚠️ Schrijf eerst je beschrijving.', 'error'); return; }
-  if (!huidigeTekst) { setStatusEl('statusBeoordeel', '⚠️ Kies eerst een tekst.', 'error'); return; }
+  if (!beschrijving) { setStatusEl('statusBeoordeel', T('errNoDescription'), 'error'); return; }
+  if (!huidigeTekst) { setStatusEl('statusBeoordeel', T('errNoText'), 'error'); return; }
 
   const btn = document.getElementById('beoordeelBtn');
   btn.disabled = true;
-  setStatusEl('statusBeoordeel', '⏳ Gemini beoordeelt je beschrijving…', 'active');
+  setStatusEl('statusBeoordeel', T('statusAssessing'), 'active');
 
-  const taalLabel = schrijfTaal === 'nl' ? 'Nederlands' : (huidigeTekst.taal === 'it' ? 'Italiaans' : schrijfTaal);
+  const taalLabel = TAAL_LABELS[schrijfTaal] || schrijfTaal;
+  const feedbackTaal = TAAL_LABELS[uiLang];
 
   const prompt = `Je bent een vriendelijke maar eerlijke leesbegeleider. Hier is een brontekst en een beschrijving die een lezer ervan gaf in eigen woorden (taal van de beschrijving: ${taalLabel}).
 
@@ -632,7 +972,7 @@ BRONTEKST:
 BESCHRIJVING VAN DE LEZER:
 """${beschrijving}"""
 
-Geef antwoord in exact dit format, zonder markdown-opmaak:
+Geef antwoord in exact dit format, zonder markdown-opmaak. Schrijf de tekst na FEEDBACK: en VERVOLGVRAAG: in het ${feedbackTaal}:
 SCORE: [cijfer 1-10]
 FEEDBACK: [2-4 zinnen, concreet: welke kernpunten zijn er, wat mist er of klopt niet, en — alleen als de beschrijving niet in het Nederlands is geschreven — een korte opmerking over taalvaardigheid, apart van de begripsscore]
 VERVOLGVRAAG: [één specifieke vraag over een klein detail uit de brontekst dat NIET in een generieke samenvatting zou staan — bv. een naam, kleur, geur, terloopse opmerking — om te checken of de tekst echt gelezen is]`;
@@ -640,7 +980,7 @@ VERVOLGVRAAG: [één specifieke vraag over een klein detail uit de brontekst dat
   try {
     const antwoord = await metRetry(
       () => callGeminiText(prompt),
-      (poging, totaal, wacht) => setStatusEl('statusBeoordeel', `⏳ Google heeft het druk — nieuwe poging ${poging}/${totaal} over ${Math.round(wacht/1000)}s…`, 'active')
+      (poging, totaal, wacht) => setStatusEl('statusBeoordeel', T('retryAssess', poging, totaal, Math.round(wacht/1000)), 'active')
     );
     const scoreMatch = antwoord.match(/SCORE:\s*(\d+)/i);
     const feedbackMatch = antwoord.match(/FEEDBACK:\s*([\s\S]*?)VERVOLGVRAAG:/i);
@@ -652,7 +992,7 @@ VERVOLGVRAAG: [één specifieke vraag over een klein detail uit de brontekst dat
 
     laatsteBeoordeling = { score, feedback, vervolgvraag, beschrijving };
 
-    document.getElementById('scoreBadge').innerHTML = `<span class="score-badge">Score: ${score}/10</span>`;
+    document.getElementById('scoreBadge').innerHTML = `<span class="score-badge">${T('scoreLabel', score)}</span>`;
     document.getElementById('beoordelingTekst').textContent = feedback;
     document.getElementById('resultCard').classList.remove('hidden');
     document.getElementById('audioCard').classList.remove('hidden');
@@ -662,7 +1002,7 @@ VERVOLGVRAAG: [één specifieke vraag over een klein detail uit de brontekst dat
       document.getElementById('vervolgBlok').classList.remove('hidden');
     }
 
-    setStatusEl('statusBeoordeel', '✅ Beoordeeld.', 'done');
+    setStatusEl('statusBeoordeel', T('statusAssessed'), 'done');
   } catch (e) {
     setStatusEl('statusBeoordeel', '❌ ' + e.message, 'error');
     console.error(e);
@@ -677,16 +1017,21 @@ async function beoordeelVervolg() {
 
   const btn = document.getElementById('vervolgBtn');
   btn.disabled = true;
-  setStatusEl('statusVervolg', '⏳ Wordt gecontroleerd…', 'active');
+  setStatusEl('statusVervolg', T('statusFollowupChecking'), 'active');
 
-  const prompt = `Brontekst:\n"""${huidigeTekst.tekst}"""\n\nVraag die gesteld is: "${laatsteBeoordeling.vervolgvraag}"\nAntwoord van de lezer: "${antwoordTekst}"\n\nKlopt dit antwoord met de brontekst? Antwoord in maximaal 2 zinnen, begin met "Klopt" of "Klopt niet" en leg kort uit waarom.`;
+  const feedbackTaal = TAAL_LABELS[uiLang];
+  const prompt = `Brontekst:\n"""${huidigeTekst.tekst}"""\n\nVraag die gesteld is: "${laatsteBeoordeling.vervolgvraag}"\nAntwoord van de lezer: "${antwoordTekst}"\n\nKlopt dit antwoord met de brontekst? Antwoord in exact dit format, zonder markdown-opmaak. Schrijf de tekst na UITLEG: in het ${feedbackTaal}:\nKLOPT: [ja of nee]\nUITLEG: [maximaal 2 zinnen]`;
 
   try {
     const resultaat = await metRetry(
       () => callGeminiText(prompt),
-      (poging, totaal, wacht) => setStatusEl('statusVervolg', `⏳ Even geduld, nieuwe poging ${poging}/${totaal}…`, 'active')
+      (poging, totaal, wacht) => setStatusEl('statusVervolg', T('retryFollowup', poging, totaal), 'active')
     );
-    setStatusEl('statusVervolg', '✅ ' + resultaat, resultaat.toLowerCase().startsWith('klopt niet') ? 'error' : 'done');
+    const kloptMatch = resultaat.match(/KLOPT:\s*(ja|nee)/i);
+    const uitlegMatch = resultaat.match(/UITLEG:\s*([\s\S]*)/i);
+    const klopt = kloptMatch ? /ja/i.test(kloptMatch[1]) : true;
+    const uitleg = uitlegMatch ? uitlegMatch[1].trim() : resultaat;
+    setStatusEl('statusVervolg', (klopt ? '✅ ' : '❌ ') + uitleg, klopt ? 'done' : 'error');
   } catch (e) {
     setStatusEl('statusVervolg', '❌ ' + e.message, 'error');
   }
@@ -705,21 +1050,21 @@ const VASTE_STEM = 'Kore'; // vaste, neutrale stem — bewust geen keuzemogelijk
 
 async function maakAudio() {
   const apiKey = getKey();
-  if (!apiKey) { setStatusEl('statusAudio', '⚠️ Vul eerst je API-key in.', 'error'); return; }
+  if (!apiKey) { setStatusEl('statusAudio', T('errNoKeyShort'), 'error'); return; }
   const beschrijving = document.getElementById('beschrijving').value.trim();
   if (!beschrijving) return;
 
   const btn = document.getElementById('ttsBtn');
   btn.disabled = true;
   document.getElementById('downloadBtn').classList.add('hidden');
-  setStatusEl('statusAudio', '⏳ Gemini AI maakt het audiofragment…', 'active');
+  setStatusEl('statusAudio', T('statusAudioGenerating'), 'active');
 
   const chunks = splitIntoChunks(beschrijving, 2000);
   const allPcm = [];
 
   try {
     for (let i = 0; i < chunks.length; i++) {
-      setStatusEl('statusAudio', `⏳ Audio genereren… (${i+1}/${chunks.length})`, 'active');
+      setStatusEl('statusAudio', T('statusAudioChunk', i+1, chunks.length), 'active');
       const data = await metRetry(
         async () => {
           const resp = await fetch(
@@ -742,7 +1087,7 @@ async function maakAudio() {
           }
           return resp.json();
         },
-        (poging, totaal, wacht) => setStatusEl('statusAudio', `⏳ Google heeft het druk — nieuwe poging ${poging}/${totaal} (blok ${i+1}/${chunks.length})…`, 'active')
+        (poging, totaal, wacht) => setStatusEl('statusAudio', T('retryAudio', poging, totaal, i+1, chunks.length), 'active')
       );
       const b64 = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
       if (!b64) throw new Error(`Geen audio voor blok ${i+1}.`);
@@ -765,7 +1110,7 @@ async function maakAudio() {
     player.load();
 
     document.getElementById('downloadBtn').classList.remove('hidden');
-    setStatusEl('statusAudio', '✅ Klaar.', 'done');
+    setStatusEl('statusAudio', T('statusAudioDone'), 'done');
   } catch (e) {
     setStatusEl('statusAudio', '❌ ' + e.message, 'error');
     console.error(e);
@@ -881,7 +1226,7 @@ async function pcmToMp3(pcmBytes, sampleRate) {
 async function downloadAudio() {
   if (!audioPcmData) return;
   const btn = document.getElementById('downloadBtn');
-  btn.textContent = '⏳ Omzetten naar mp3…';
+  btn.textContent = T('downloadingMp3');
   btn.disabled = true;
   try {
     const mp3 = await pcmToMp3(audioPcmData, 24000);
@@ -898,11 +1243,13 @@ async function downloadAudio() {
   } catch (e) {
     console.error(e);
   }
-  btn.textContent = '⬇ Download mp3';
+  btn.textContent = T('downloadBtnLabel');
   btn.disabled = false;
 }
 
 // ── Boot ────────────────────────────────────────────────────────────
+initAppLangFilter();
+setUiTaal(uiLang);
 initTaalFilter();
 initTextChoice();
 loadKey();
