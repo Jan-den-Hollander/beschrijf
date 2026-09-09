@@ -1,0 +1,988 @@
+<!--
+================================================================================
+  © Jan den Hollander — jandenhollander@duck.com
+  GitHub: https://github.com/Jan-den-Hollander
+  Projectnaam: Beschrijf 📖
+  Versie: 0.1 (kernflow) | Datum: 2026-09-08
+
+  LICENTIE / LICENSE (NL | EN | IT)
+  ──────────────────────────────────────────────────────────────────────────────
+  NL: Dit werk is auteursrechtelijk beschermd. Het mag vrij worden gebruikt,
+  gedeeld en verspreid, uitsluitend voor niet-commerciële doeleinden en
+  uitsluitend in ongewijzigde vorm, met vermelding van de oorspronkelijke
+  auteur. Commercieel gebruik, wijziging, verkoop of integratie in betaalde
+  producten of diensten is uitdrukkelijk verboden zonder schriftelijke
+  toestemming van de auteur. Hulp is en blijft gratis.
+
+  EN: This work is protected by copyright. It may be freely used, shared and
+  distributed for non-commercial purposes only, in unmodified form, with
+  attribution to the original author. Commercial use, modification, sale or
+  integration into paid products or services is strictly prohibited without
+  prior written consent of the author. Help is and remains free.
+
+  IT: Quest'opera è protetta da diritto d'autore. Può essere liberamente
+  utilizzata, condivisa e distribuita esclusivamente per scopi non commerciali,
+  nella sua forma originale e non modificata, con attribuzione all'autore
+  originale. L'uso commerciale, la modifica, la vendita o l'integrazione in
+  prodotti o servizi a pagamento sono espressamente vietati senza il consenso
+  scritto dell'autore. L'aiuto è e rimane gratuito.
+
+  Originele broncode / Original source / Fonte originale:
+  https://github.com/Jan-den-Hollander
+
+  Alle rechten voorbehouden / All rights reserved / Tutti i diritti riservati
+  © Jan den Hollander
+================================================================================
+-->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beschrijf">
+<meta name="theme-color" content="#1a2332">
+<title>Beschrijf 📖</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --ink:      #182230;
+  --ink2:     #223044;
+  --panel:    #1f2c3d;
+  --paper:    #f2ead9;
+  --paper-dim:#c9c0ac;
+  --mark:     #d4a017;
+  --mark2:    #e8bc4a;
+  --sage:     #6b8f71;
+  --sage2:    #86ab8c;
+  --rust:     #b5533c;
+  --rule:     rgba(242,234,217,0.14);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--paper);
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 28px 16px 64px;
+}
+
+.header {
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 18px;
+}
+
+.header h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 2.1rem;
+  color: var(--paper);
+  margin-bottom: 4px;
+}
+
+.header .tagline {
+  font-size: 0.8rem;
+  color: var(--mark2);
+  letter-spacing: 0.02em;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.card-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--mark2);
+  margin-bottom: 10px;
+}
+
+/* Settings / API key */
+details.settings { margin-bottom: 20px; }
+details.settings summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--paper-dim);
+  padding: 8px 0;
+  list-style: none;
+}
+details.settings summary::-webkit-details-marker { display: none; }
+details.settings summary::before { content: "⚙ "; }
+details.settings[open] summary { color: var(--mark2); }
+
+.key-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.key-row input {
+  flex: 1;
+  min-width: 160px;
+  padding: 9px 12px;
+  background: var(--ink2);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+}
+.key-row input:focus { outline: none; border-color: var(--mark); }
+.key-note {
+  font-size: 0.72rem;
+  color: var(--paper-dim);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.key-status { font-size: 0.75rem; margin-top: 6px; }
+.key-status.ok { color: var(--sage2); }
+.key-status.err { color: var(--rust); }
+
+/* Text picker */
+.text-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.text-btn {
+  text-align: left;
+  padding: 12px 14px;
+  background: var(--ink2);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.text-btn strong {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 0.98rem;
+  display: block;
+  margin-bottom: 2px;
+}
+.text-btn small { color: var(--paper-dim); }
+.text-btn.selected { border-color: var(--mark); background: rgba(212,160,23,0.08); }
+
+/* Reading pane */
+.reading {
+  font-family: 'Fraunces', serif;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--paper);
+  white-space: pre-wrap;
+}
+
+/* Mode toggle */
+.mode-toggle {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.mode-btn {
+  flex: 1;
+  padding: 9px;
+  background: var(--ink2);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--paper-dim);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+.mode-btn.active { border-color: var(--sage); color: var(--sage2); background: rgba(107,143,113,0.1); }
+
+textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 12px;
+  background: var(--ink2);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--paper);
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+textarea:focus { outline: none; border-color: var(--mark); }
+
+button.primary {
+  width: 100%;
+  padding: 13px;
+  margin-top: 12px;
+  background: var(--mark);
+  border: none;
+  border-radius: 3px;
+  color: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+button.primary:disabled { opacity: 0.5; }
+button.secondary {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid var(--sage);
+  border-radius: 3px;
+  color: var(--sage2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+button.secondary:disabled { opacity: 0.4; }
+
+.status { font-size: 0.78rem; margin-top: 10px; line-height: 1.5; }
+.status.active { color: var(--mark2); }
+.status.done { color: var(--sage2); }
+.status.error { color: var(--rust); }
+
+.beoordeling {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+.score-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 3px;
+  background: rgba(107,143,113,0.15);
+  color: var(--sage2);
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+}
+
+.vervolgvraag { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.vervolgvraag p { font-size: 0.92rem; margin-bottom: 8px; color: var(--mark2); }
+
+audio { width: 100%; margin-top: 12px; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <h1>Beschrijf 📖</h1>
+    <div class="tagline">lees · schrijf na · luister terug</div>
+  </div>
+
+  <details class="settings">
+    <summary>Instellingen — Gemini API-key</summary>
+    <div class="key-row">
+      <input type="password" id="apiKeyInput" placeholder="AIza…">
+      <button class="secondary" style="width:auto;margin:0;padding:9px 16px" onclick="saveKey()">Bewaar</button>
+    </div>
+    <div class="key-status" id="keyStatus"></div>
+    <div class="key-note">
+      Je eigen gratis Gemini API-key, aan te maken via
+      <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#e8bc4a">aistudio.google.com/apikey</a>
+      ("Create API key"). De key wordt alleen op dit toestel bewaard (localStorage) en gaat rechtstreeks van je
+      browser naar Google — nooit via een server van deze app.
+    </div>
+  </details>
+
+  <div class="card" style="border-color:rgba(212,160,23,0.35)">
+    <div class="card-label">WAAROM DEZE APP</div>
+    <p style="font-size:0.85rem;line-height:1.6;color:var(--paper-dim)">
+      Begrijpend lezen holt achteruit — de PISA-onderzoeken laten dat al jaren zien. Wie een tekst niet goed
+      kan doorgronden, loopt straks vast bij een bijsluiter, een handleiding of een officiële brief.
+      Deze app oefent dat door je te laten <strong style="color:var(--mark2)">navertellen wat je gelezen hebt</strong> —
+      pas als je iets in eigen woorden kunt uitleggen, heb je het echt begrepen.
+      Kies je een tekst in een vreemde taal, dan oefen je meteen ook die taal — handig als extra oefenstof
+      naast bijvoorbeeld de Franse of Duitse les.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">1 · KIES EEN TEKST</div>
+    <div class="text-choice" id="textChoice"></div>
+    <button class="secondary" style="margin-top:10px" onclick="toonEigenTekst()">✏️ Of voer zelf een tekst in</button>
+    <div id="eigenTekstBlok" class="hidden" style="margin-top:12px">
+      <input type="text" id="eigenTitel" placeholder="Titel" style="width:100%;padding:9px 12px;background:var(--ink2);border:1px solid var(--rule);border-radius:3px;color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.85rem;margin-bottom:8px">
+      <select id="eigenTaal" style="width:100%;padding:9px 12px;background:var(--ink2);border:1px solid var(--rule);border-radius:3px;color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.85rem;margin-bottom:8px">
+        <option value="nl">Nederlands</option>
+        <option value="en">Engels</option>
+        <option value="de">Duits</option>
+        <option value="fr">Frans</option>
+        <option value="es">Spaans</option>
+        <option value="it">Italiaans</option>
+      </select>
+      <textarea id="eigenTekstInhoud" placeholder="Plak of typ hier de tekst die gelezen en beschreven moet worden…" style="min-height:120px"></textarea>
+      <button class="primary" onclick="gebruikEigenTekst()">Gebruik deze tekst</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="readingCard">
+    <div class="card-label">LEES</div>
+    <div class="reading" id="readingText"></div>
+  </div>
+
+  <div class="card hidden" id="writeCard">
+    <div class="card-label">2 · BESCHRIJF HET VERHAAL IN EIGEN WOORDEN</div>
+    <div class="mode-toggle" id="modeToggle"></div>
+    <textarea id="beschrijving" placeholder="Typ hier je beschrijving…" style="margin-top:12px" oninput="updateWoordenteller()"></textarea>
+    <div id="woordenteller" style="font-size:0.72rem;color:var(--paper-dim);margin-top:4px"></div>
+    <button class="primary" id="beoordeelBtn" onclick="beoordeel()">Laat beoordelen</button>
+    <div class="status" id="statusBeoordeel"></div>
+  </div>
+
+  <div class="card hidden" id="resultCard">
+    <div class="card-label">BEOORDELING</div>
+    <div id="scoreBadge"></div>
+    <div class="beoordeling" id="beoordelingTekst"></div>
+    <div class="vervolgvraag hidden" id="vervolgBlok">
+      <p id="vervolgvraagTekst"></p>
+      <textarea id="vervolgAntwoord" placeholder="Je antwoord…" style="min-height:70px"></textarea>
+      <button class="primary" id="vervolgBtn" onclick="beoordeelVervolg()">Antwoord versturen</button>
+      <div class="status" id="statusVervolg"></div>
+    </div>
+  </div>
+
+  <div class="card hidden" id="audioCard">
+    <div class="card-label">3 · LUISTERBOEK VAN JE BESCHRIJVING</div>
+    <button class="secondary" id="ttsBtn" onclick="maakAudio()">🔊 Maak mp3</button>
+    <div class="status" id="statusAudio"></div>
+    <audio id="audioPlayer" controls class="hidden"></audio>
+    <button class="secondary hidden" id="downloadBtn" onclick="downloadAudio()">⬇ Download mp3</button>
+  </div>
+
+</div>
+
+<script>
+// ── Voorbeeldteksten (v1 — kernflow-test) ─────────────────────────────
+const TEKSTEN = [
+  {
+    id: 'nl1', taal: 'nl', titel: 'De oude brievenbus',
+    tekst: `Aan het eind van de Kastanjelaan stond een brievenbus die niemand meer gebruikte. Hij was groen geweest, ooit, maar de verf bladderde af en had plaatsgemaakt voor roest in de vorm van vlekken. Toch klepperde het luikje nog elke keer dat de wind opstak, alsof hij nog steeds post verwachtte.
+
+Op een namiddag in oktober zag Mila iets wits achter het roest. Ze trok het luikje open — het piepte hard — en vond een envelop, vergeeld, zonder postzegel. Er stond geen naam op, alleen: "Voor wie het vinden wil."
+
+Mila aarzelde. Was dit een grap van iemand uit de buurt? Ze keek om zich heen, maar de straat was leeg, op een kat na die haar vanaf een muurtje gadesloeg. Ze stak de envelop in haar jaszak en liep door, met het idee dat ze hem later wel zou openmaken. Maar die avond, thuis aan de keukentafel, kon ze niet wachten.`
+  },
+  {
+    id: 'it1', taal: 'it', titel: 'Il gatto del mercato',
+    tekst: `Ogni mattina, prima ancora che i venditori aprissero le bancarelle, un gatto grigio attraversava la piazza del mercato come se il posto gli appartenesse. Nessuno sapeva bene a chi appartenesse davvero — c'era chi diceva fosse del fruttivendolo, chi del panettiere — ma il gatto non sembrava appartenere a nessuno in particolare.
+
+Si fermava sempre allo stesso banco, quello del pesce, dove Anselmo lavorava fin dall'alba. Anselmo fingeva di non vederlo, ma ogni giorno, quasi per caso, lasciava cadere un pezzetto di pesce vicino ai suoi piedi. Il gatto lo prendeva senza fretta, come se fosse un diritto acquisito e non un regalo.
+
+Un giorno Anselmo non venne. Il banco rimase chiuso, le casse vuote impilate una sull'altra. Il gatto aspettò tutta la mattina, seduto nello stesso punto, e quando capì che quel giorno non sarebbe arrivato nulla, si allontanò lentamente verso il retro del mercato, dove nessuno lo vide più per una settimana intera.`
+  }
+];
+
+let huidigeTekst = null;
+let schrijfTaal = 'nl';
+let laatsteBeoordeling = null;
+let audioPcmData = null;
+
+// ── Init ────────────────────────────────────────────────────────────
+function initTextChoice() {
+  const el = document.getElementById('textChoice');
+  el.innerHTML = TEKSTEN.map(t => `
+    <button class="text-btn" data-id="${t.id}" onclick="kiesTekst('${t.id}')">
+      <strong>${t.titel}</strong>
+      <small>${t.taal === 'nl' ? 'Nederlands' : 'Italiano'} · ${Math.round(t.tekst.length/5)} woorden</small>
+    </button>
+  `).join('');
+}
+
+function kiesTekst(id) {
+  huidigeTekst = TEKSTEN.find(t => t.id === id);
+  document.querySelectorAll('.text-btn').forEach(b =>
+    b.classList.toggle('selected', b.dataset.id === id));
+  toonTekst();
+}
+
+function toonTekst() {
+  document.getElementById('readingText').textContent = huidigeTekst.tekst;
+  document.getElementById('readingCard').classList.remove('hidden');
+  document.getElementById('writeCard').classList.remove('hidden');
+  document.getElementById('resultCard').classList.add('hidden');
+  document.getElementById('audioCard').classList.add('hidden');
+  document.getElementById('beschrijving').value = '';
+  updateWoordenteller();
+
+  // Modus-keuze: NL of brontaal (alleen tonen als brontaal niet NL is)
+  const modeEl = document.getElementById('modeToggle');
+  if (huidigeTekst.taal === 'nl') {
+    schrijfTaal = 'nl';
+    modeEl.innerHTML = '';
+  } else {
+    schrijfTaal = 'nl';
+    const label = huidigeTekst.taal === 'it' ? 'Italiaans' : huidigeTekst.taal.toUpperCase();
+    modeEl.innerHTML = `
+      <button class="mode-btn active" data-lang="nl" onclick="zetModus('nl')">Beschrijf in het Nederlands</button>
+      <button class="mode-btn" data-lang="${huidigeTekst.taal}" onclick="zetModus('${huidigeTekst.taal}')">Beschrijf in het ${label}</button>
+    `;
+  }
+}
+
+function toonEigenTekst() {
+  document.getElementById('eigenTekstBlok').classList.toggle('hidden');
+}
+
+function gebruikEigenTekst() {
+  const titel = document.getElementById('eigenTitel').value.trim() || 'Eigen tekst';
+  const taal = document.getElementById('eigenTaal').value;
+  const tekst = document.getElementById('eigenTekstInhoud').value.trim();
+  if (!tekst) return;
+  huidigeTekst = { id: 'eigen-' + Date.now(), taal, titel, tekst };
+  document.querySelectorAll('.text-btn').forEach(b => b.classList.remove('selected'));
+  toonTekst();
+}
+
+function zetModus(lang) {
+  schrijfTaal = lang;
+  document.querySelectorAll('.mode-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === lang));
+}
+
+// Richtlijn voor lengte van de beschrijving, geschaald op de lengte van de brontekst
+function woordenDoel() {
+  const bronWoorden = huidigeTekst ? huidigeTekst.tekst.trim().split(/\s+/).length : 150;
+  const min = Math.max(60, Math.round(bronWoorden * 0.5));
+  const max = Math.round(bronWoorden * 1.0);
+  return { min, max };
+}
+
+function updateWoordenteller() {
+  const tekst = document.getElementById('beschrijving').value.trim();
+  const aantal = tekst ? tekst.split(/\s+/).length : 0;
+  const { min, max } = woordenDoel();
+  const el = document.getElementById('woordenteller');
+  el.textContent = `${aantal} woorden — richtlijn: ${min}–${max} woorden`;
+  el.style.color = (aantal >= min && aantal <= max) ? 'var(--sage2)' : 'var(--paper-dim)';
+}
+
+// ── API key ─────────────────────────────────────────────────────────
+const KEY_STORE = 'beschrijf_gemini_key';
+
+function loadKey() {
+  const k = localStorage.getItem(KEY_STORE);
+  if (k) {
+    document.getElementById('apiKeyInput').value = k;
+    setKeyStatus('✅ Key bewaard op dit toestel.', 'ok');
+  }
+}
+function saveKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (k.length < 20) { setKeyStatus('⚠️ Key lijkt te kort — controleer of je hem volledig geplakt hebt.', 'err'); return; }
+  localStorage.setItem(KEY_STORE, k);
+  setKeyStatus('✅ Key bewaard op dit toestel.', 'ok');
+}
+function setKeyStatus(msg, cls) {
+  const el = document.getElementById('keyStatus');
+  el.textContent = msg;
+  el.className = 'key-status ' + cls;
+}
+function getKey() {
+  return localStorage.getItem(KEY_STORE) || document.getElementById('apiKeyInput').value.trim();
+}
+
+// ── Beoordeling (tekst-call) ───────────────────────────────────────
+const TEXT_MODEL = 'gemini-flash-latest'; // stabiele alias, wijst altijd naar het actuele Flash-model
+
+async function callGeminiText(prompt) {
+  const apiKey = getKey();
+  const resp = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    }
+  );
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `HTTP-fout ${resp.status}`);
+  }
+  const data = await resp.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error('Geen antwoord van Gemini ontvangen.');
+  return text;
+}
+
+async function beoordeel() {
+  const apiKey = getKey();
+  if (!apiKey) {
+    setStatusEl('statusBeoordeel', '⚠️ Vul eerst je API-key in bij Instellingen.', 'error');
+    document.querySelector('details.settings').open = true;
+    return;
+  }
+  const beschrijving = document.getElementById('beschrijving').value.trim();
+  if (!beschrijving) { setStatusEl('statusBeoordeel', '⚠️ Schrijf eerst je beschrijving.', 'error'); return; }
+  if (!huidigeTekst) { setStatusEl('statusBeoordeel', '⚠️ Kies eerst een tekst.', 'error'); return; }
+
+  const btn = document.getElementById('beoordeelBtn');
+  btn.disabled = true;
+  setStatusEl('statusBeoordeel', '⏳ Gemini beoordeelt je beschrijving…', 'active');
+
+  const taalLabel = schrijfTaal === 'nl' ? 'Nederlands' : (huidigeTekst.taal === 'it' ? 'Italiaans' : schrijfTaal);
+
+  const prompt = `Je bent een vriendelijke maar eerlijke leesbegeleider. Hier is een brontekst en een beschrijving die een lezer ervan gaf in eigen woorden (taal van de beschrijving: ${taalLabel}).
+
+BRONTEKST:
+"""${huidigeTekst.tekst}"""
+
+BESCHRIJVING VAN DE LEZER:
+"""${beschrijving}"""
+
+Geef antwoord in exact dit format, zonder markdown-opmaak:
+SCORE: [cijfer 1-10]
+FEEDBACK: [2-4 zinnen, concreet: welke kernpunten zijn er, wat mist er of klopt niet, en — alleen als de beschrijving niet in het Nederlands is geschreven — een korte opmerking over taalvaardigheid, apart van de begripsscore]
+VERVOLGVRAAG: [één specifieke vraag over een klein detail uit de brontekst dat NIET in een generieke samenvatting zou staan — bv. een naam, kleur, geur, terloopse opmerking — om te checken of de tekst echt gelezen is]`;
+
+  try {
+    const antwoord = await callGeminiText(prompt);
+    const scoreMatch = antwoord.match(/SCORE:\s*(\d+)/i);
+    const feedbackMatch = antwoord.match(/FEEDBACK:\s*([\s\S]*?)VERVOLGVRAAG:/i);
+    const vraagMatch = antwoord.match(/VERVOLGVRAAG:\s*([\s\S]*)/i);
+
+    const score = scoreMatch ? scoreMatch[1] : '?';
+    const feedback = feedbackMatch ? feedbackMatch[1].trim() : antwoord;
+    const vervolgvraag = vraagMatch ? vraagMatch[1].trim() : null;
+
+    laatsteBeoordeling = { score, feedback, vervolgvraag, beschrijving };
+
+    document.getElementById('scoreBadge').innerHTML = `<span class="score-badge">Score: ${score}/10</span>`;
+    document.getElementById('beoordelingTekst').textContent = feedback;
+    document.getElementById('resultCard').classList.remove('hidden');
+    document.getElementById('audioCard').classList.remove('hidden');
+
+    if (vervolgvraag) {
+      document.getElementById('vervolgvraagTekst').textContent = '❓ ' + vervolgvraag;
+      document.getElementById('vervolgBlok').classList.remove('hidden');
+    }
+
+    setStatusEl('statusBeoordeel', '✅ Beoordeeld.', 'done');
+  } catch (e) {
+    setStatusEl('statusBeoordeel', '❌ ' + e.message, 'error');
+    console.error(e);
+  }
+  btn.disabled = false;
+}
+
+async function beoordeelVervolg() {
+  const apiKey = getKey();
+  const antwoordTekst = document.getElementById('vervolgAntwoord').value.trim();
+  if (!antwoordTekst) return;
+
+  const btn = document.getElementById('vervolgBtn');
+  btn.disabled = true;
+  setStatusEl('statusVervolg', '⏳ Wordt gecontroleerd…', 'active');
+
+  const prompt = `Brontekst:\n"""${huidigeTekst.tekst}"""\n\nVraag die gesteld is: "${laatsteBeoordeling.vervolgvraag}"\nAntwoord van de lezer: "${antwoordTekst}"\n\nKlopt dit antwoord met de brontekst? Antwoord in maximaal 2 zinnen, begin met "Klopt" of "Klopt niet" en leg kort uit waarom.`;
+
+  try {
+    const resultaat = await callGeminiText(prompt);
+    setStatusEl('statusVervolg', '✅ ' + resultaat, resultaat.toLowerCase().startsWith('klopt niet') ? 'error' : 'done');
+  } catch (e) {
+    setStatusEl('statusVervolg', '❌ ' + e.message, 'error');
+  }
+  btn.disabled = false;
+}
+
+function setStatusEl(id, msg, cls) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'status ' + cls;
+}
+
+// ── TTS: één vaste stem (eerlijke competitie) ─────────────────────
+const TTS_MODEL = 'gemini-3.1-flash-tts-preview';
+const VASTE_STEM = 'Kore'; // vaste, neutrale stem — bewust geen keuzemogelijkheid
+
+async function maakAudio() {
+  const apiKey = getKey();
+  if (!apiKey) { setStatusEl('statusAudio', '⚠️ Vul eerst je API-key in.', 'error'); return; }
+  const beschrijving = document.getElementById('beschrijving').value.trim();
+  if (!beschrijving) return;
+
+  const btn = document.getElementById('ttsBtn');
+  btn.disabled = true;
+  document.getElementById('downloadBtn').classList.add('hidden');
+  setStatusEl('statusAudio', '⏳ Gemini AI maakt het audiofragment…', 'active');
+
+  const chunks = splitIntoChunks(beschrijving, 2000);
+  const allPcm = [];
+
+  try {
+    for (let i = 0; i < chunks.length; i++) {
+      setStatusEl('statusAudio', `⏳ Audio genereren… (${i+1}/${chunks.length})`, 'active');
+      const resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: chunks[i] }] }],
+            generationConfig: {
+              responseModalities: ['AUDIO'],
+              speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VASTE_STEM } } }
+            }
+          })
+        }
+      );
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP-fout ${resp.status}`);
+      }
+      const data = await resp.json();
+      const b64 = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if (!b64) throw new Error(`Geen audio voor blok ${i+1}.`);
+      const pcm = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+      allPcm.push(trimSilence(normalizeRms(pcm)));
+    }
+
+    const totalLen = allPcm.reduce((s, p) => s + p.length, 0);
+    const combined = new Uint8Array(totalLen);
+    let offset = 0;
+    for (const p of allPcm) { combined.set(p, offset); offset += p.length; }
+
+    audioPcmData = combined;
+    const wav = buildWav(combined, 24000, 1, 16);
+    const blob = new Blob([wav], { type: 'audio/wav' });
+    const url = URL.createObjectURL(blob);
+    const player = document.getElementById('audioPlayer');
+    player.src = url;
+    player.classList.remove('hidden');
+    player.load();
+
+    document.getElementById('downloadBtn').classList.remove('hidden');
+    setStatusEl('statusAudio', '✅ Klaar.', 'done');
+  } catch (e) {
+    setStatusEl('statusAudio', '❌ ' + e.message, 'error');
+    console.error(e);
+  }
+  btn.disabled = false;
+}
+
+function splitIntoChunks(text, maxLen) {
+  const chunks = [];
+  let remaining = text;
+  while (remaining.length > 0) {
+    if (remaining.length <= maxLen) { chunks.push(remaining); break; }
+    let cut = remaining.lastIndexOf('. ', maxLen);
+    if (cut < maxLen * 0.5) cut = maxLen;
+    chunks.push(remaining.substring(0, cut + 1).trim());
+    remaining = remaining.substring(cut + 1);
+  }
+  return chunks;
+}
+
+// ── Verbeterde audio-normalisatie: RMS (gemiddelde luidheid) i.p.v. piek ──
+// Piek-normalisatie liet blokken hoorbaar verschillen in luidheid en gaf
+// hoorbare "wegfade"-sprongen op de naden tussen blokken. RMS-normalisatie
+// trekt de gemiddelde luidheid gelijk, wat veel consistenter klinkt.
+function normalizeRms(pcmBytes) {
+  const samples = new Int16Array(pcmBytes.buffer, pcmBytes.byteOffset, pcmBytes.byteLength / 2);
+  let sumSq = 0;
+  for (let i = 0; i < samples.length; i++) sumSq += samples[i] * samples[i];
+  const rms = Math.sqrt(sumSq / samples.length);
+  if (rms === 0) return pcmBytes;
+
+  const targetRms = 32767 * 0.28; // richtwaarde voor natuurlijke spraakluidheid
+  let gain = targetRms / rms;
+  gain = Math.max(0.6, Math.min(gain, 1.8)); // begrensd, voorkomt extreme uitschieters
+
+  const out = new Int16Array(samples.length);
+  for (let i = 0; i < samples.length; i++) {
+    out[i] = Math.max(-32768, Math.min(32767, Math.round(samples[i] * gain)));
+  }
+  return new Uint8Array(out.buffer);
+}
+
+// Snijdt (bijna-)stilte aan begin en eind van een blok weg, zodat de
+// naden tussen geplakte blokken niet meer hoorbaar "wegdeemsteren".
+function trimSilence(pcmBytes) {
+  const samples = new Int16Array(pcmBytes.buffer, pcmBytes.byteOffset, pcmBytes.byteLength / 2);
+  const threshold = 400; // amplitude-drempel voor "stilte"
+  let start = 0, end = samples.length - 1;
+  while (start < end && Math.abs(samples[start]) < threshold) start++;
+  while (end > start && Math.abs(samples[end]) < threshold) end--;
+  // kleine marge terug erbij, anders klinkt het te abrupt afgesneden
+  const margin = Math.round(24000 * 0.03); // ~30ms bij 24kHz
+  start = Math.max(0, start - margin);
+  end = Math.min(samples.length - 1, end + margin);
+  return new Uint8Array(samples.buffer.slice(samples.byteOffset + start * 2, samples.byteOffset + (end + 1) * 2));
+}
+
+function buildWav(pcmData, sampleRate, numChannels, bitsPerSample) {
+  const dataLen = pcmData.length;
+  const buffer = new ArrayBuffer(44 + dataLen);
+  const view = new DataView(buffer);
+  const writeStr = (off, str) => { for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i)); };
+  writeStr(0, 'RIFF');
+  view.setUint32(4, 36 + dataLen, true);
+  writeStr(8, 'WAVE');
+  writeStr(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * numChannels * bitsPerSample / 8, true);
+  view.setUint16(32, numChannels * bitsPerSample / 8, true);
+  view.setUint16(34, bitsPerSample, true);
+  writeStr(36, 'data');
+  view.setUint32(40, dataLen, true);
+  new Uint8Array(buffer).set(pcmData, 44);
+  return new Uint8Array(buffer);
+}
+
+// ── MP3-export via lamejs (zoals bij Buonanotte) ──────────────────
+let lameLoaded = false;
+function loadLame() {
+  return new Promise((resolve) => {
+    if (lameLoaded) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js';
+    s.onload = () => { lameLoaded = true; resolve(); };
+    s.onerror = () => resolve();
+    document.head.appendChild(s);
+  });
+}
+async function pcmToMp3(pcmBytes, sampleRate) {
+  await loadLame();
+  if (typeof lamejs === 'undefined') return null;
+  const samples = new Int16Array(pcmBytes.buffer, pcmBytes.byteOffset, pcmBytes.byteLength / 2);
+  const mp3enc = new lamejs.Mp3Encoder(1, sampleRate, 128);
+  const blockSize = 1152;
+  const mp3Data = [];
+  for (let i = 0; i < samples.length; i += blockSize) {
+    const chunk = samples.subarray(i, i + blockSize);
+    const buf = mp3enc.encodeBuffer(chunk);
+    if (buf.length > 0) mp3Data.push(new Uint8Array(buf));
+  }
+  const final = mp3enc.flush();
+  if (final.length > 0) mp3Data.push(new Uint8Array(final));
+  const totalLen = mp3Data.reduce((s, a) => s + a.length, 0);
+  const out = new Uint8Array(totalLen);
+  let offset = 0;
+  for (const c of mp3Data) { out.set(c, offset); offset += c.length; }
+  return out;
+}
+
+async function downloadAudio() {
+  if (!audioPcmData) return;
+  const btn = document.getElementById('downloadBtn');
+  btn.textContent = '⏳ Omzetten naar mp3…';
+  btn.disabled = true;
+  try {
+    const mp3 = await pcmToMp3(audioPcmData, 24000);
+    let blob, ext;
+    if (mp3) { blob = new Blob([mp3], { type: 'audio/mpeg' }); ext = 'mp3'; }
+    else { blob = new Blob([buildWav(audioPcmData, 24000, 1, 16)], { type: 'audio/wav' }); ext = 'wav'; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `beschrijf-${(huidigeTekst?.titel || 'verhaal').toLowerCase().replace(/\s+/g, '-')}.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (e) {
+    console.error(e);
+  }
+  btn.textContent = '⬇ Download mp3';
+  btn.disabled = false;
+}
+
+// ── Boot ────────────────────────────────────────────────────────────
+initTextChoice();
+loadKey();
+</script>
+
+<!-- ① ZICHTBARE FOOTER -->
+<div id="jdh-copyright-footer" style="
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.82);
+  color: #ccc;
+  font-size: 11px;
+  text-align: center;
+  padding: 4px 8px;
+  z-index: 99999;
+  font-family: sans-serif;
+  letter-spacing: 0.3px;
+  user-select: none;
+">
+  © <span id="jdh-year"></span> Jan den Hollander &nbsp;|&nbsp;
+  <span id="jdh-project-title" style="color:#7eb8f7"></span> &nbsp;|&nbsp;
+  Vrij gebruik · niet-commercieel · ongewijzigd &nbsp;|&nbsp;
+  <span style="color:#aaa; cursor:pointer; text-decoration:underline"
+        onclick="document.getElementById('jdh-modal').style.display='flex'">
+    ℹ️ Licentie
+  </span>
+</div>
+
+<!-- ② LICENTIE MODAL -->
+<div id="jdh-modal" style="
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.7);
+  z-index:999999;
+  align-items:center; justify-content:center;
+">
+  <div style="
+    background:#1a1a2e; color:#e0e0e0;
+    border:1px solid #444; border-radius:10px;
+    max-width:480px; width:90%; padding:24px;
+    font-family:sans-serif; font-size:13px; line-height:1.6;
+  ">
+    <h3 style="color:#7eb8f7; margin-top:0">
+      © Jan den Hollander &nbsp;·&nbsp;
+      <span id="jdh-modal-title" style="font-weight:normal;font-size:12px"></span>
+    </h3>
+    <p>Dit hulpmiddel is <strong>gratis</strong> en mag vrij worden gedeeld,
+    uitsluitend <strong>ongewijzigd</strong> en voor
+    <strong>niet-commerciële</strong> doeleinden, met bronvermelding.</p>
+    <p>Commercieel gebruik, wijziging of verkoop is <strong>verboden</strong>
+    zonder schriftelijke toestemming. Het gebruik van naam of projecttitel
+    impliceert geen toestemming en vormt bij commercieel gebruik een
+    zelfstandige auteursrechtinbreuk.</p>
+    <p style="color:#aaa;font-size:11px">
+      This tool is free and may be shared freely, unmodified, for non-commercial
+      purposes only, with attribution. Commercial use, modification or sale is
+      prohibited. Use of the name or project title does not imply consent and
+      constitutes an independent copyright infringement in commercial contexts.<br><br>
+      Quest'opera è gratuita e può essere condivisa liberamente, senza modifiche,
+      per scopi non commerciali, con attribuzione. L'uso commerciale è vietato.
+    </p>
+    <p style="margin-bottom:4px">
+      📧 <a href="mailto:jandenhollander@duck.com"
+            style="color:#7eb8f7">jandenhollander@duck.com</a>
+    </p>
+    <p style="margin-top:4px;margin-bottom:0">
+      🔗 Broncode / Source:
+      <a href="https://github.com/Jan-den-Hollander"
+         target="_blank" style="color:#7eb8f7">github.com/Jan-den-Hollander</a>
+    </p>
+    <button onclick="document.getElementById('jdh-modal').style.display='none'"
+            style="
+              margin-top:16px; padding:8px 20px;
+              background:#7eb8f7; color:#000;
+              border:none; border-radius:6px;
+              cursor:pointer; font-weight:bold;
+            ">Sluiten</button>
+  </div>
+</div>
+
+<!-- ③ INTEGRITEITSCHECK -->
+<script>
+(function() {
+  'use strict';
+  var projectName = document.title || 'Onbekend project';
+  var yearEl = document.getElementById('jdh-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  var titleEl = document.getElementById('jdh-project-title');
+  if (titleEl) titleEl.textContent = projectName;
+  var modalTitleEl = document.getElementById('jdh-modal-title');
+  if (modalTitleEl) modalTitleEl.textContent = projectName;
+
+  function blockApp() {
+    document.body.innerHTML = '';
+    document.body.style.cssText =
+      'margin:0;background:#111;display:flex;align-items:center;' +
+      'justify-content:center;height:100vh;font-family:sans-serif;';
+    document.body.innerHTML =
+      '<div style="text-align:center;color:#e55;max-width:440px;padding:24px">' +
+      '<div style="font-size:52px">⛔</div>' +
+      '<h2 style="color:#e55;margin:12px 0 8px">Toegang geblokkeerd</h2>' +
+      '<p style="color:#ddd;font-size:14px">De copyright-informatie van ' +
+      '<strong style="color:#7eb8f7">' + projectName + '</strong> ' +
+      'is verwijderd of gewijzigd.</p>' +
+      '<p style="color:#aaa;font-size:12px">The copyright information of ' +
+      'this application has been removed or modified.<br>' +
+      'La sezione copyright di questa applicazione è stata rimossa o modificata.</p>' +
+      '<hr style="border-color:#333;margin:16px 0">' +
+      '<p style="color:#ccc;font-size:13px">Originele auteur / Original author:</p>' +
+      '<p style="margin:4px 0;font-size:14px">© Jan den Hollander</p>' +
+      '<p style="margin:4px 0">' +
+      '<a href="mailto:jandenhollander@duck.com" ' +
+      'style="color:#7eb8f7;font-size:12px">jandenhollander@duck.com</a></p>' +
+      '<p style="margin:8px 0">' +
+      '<a href="https://github.com/Jan-den-Hollander" target="_blank" ' +
+      'style="color:#7eb8f7;font-size:12px">🔗 github.com/Jan-den-Hollander</a></p>' +
+      '</div>';
+  }
+
+  var ALLOWED = [
+    'localhost', '127.0.0.1',
+    'jan-den-hollander.github.io',
+    'beschrijf.vercel.app', 'beschrijf',
+    'claude.ai', 'stackblitz.io', 'stackblitz.com'
+  ];
+
+  function domainAllowed() {
+    var host = window.location.hostname.toLowerCase();
+    var proto = window.location.protocol;
+    if (proto === 'file:' || proto === 'content:') return true;
+    if (!host || host === '') return true;
+    return ALLOWED.some(function(a) {
+      return host === a || host.endsWith('.' + a) || host.indexOf(a) !== -1;
+    });
+  }
+
+  function warnDomain() {
+    var banner = document.createElement('div');
+    banner.id = 'jdh-domain-warning';
+    banner.style.cssText =
+      'position:fixed;top:0;left:0;right:0;z-index:99998;' +
+      'background:#8a2010;color:#fff;font-family:sans-serif;' +
+      'font-size:12px;text-align:center;padding:8px 12px;line-height:1.5;';
+    banner.innerHTML =
+      '⚠️ <strong>' + projectName + '</strong> draait op een niet-erkend domein ' +
+      '(<em>' + window.location.hostname + '</em>). ' +
+      'Origineel: <a href="https://github.com/Jan-den-Hollander" ' +
+      'target="_blank" style="color:#ffccaa">github.com/Jan-den-Hollander</a> · ' +
+      '<a href="mailto:jandenhollander@duck.com" style="color:#ffccaa">' +
+      'jandenhollander@duck.com</a>';
+    document.body.insertBefore(banner, document.body.firstChild);
+  }
+
+  if (!domainAllowed()) { setTimeout(warnDomain, 800); }
+
+  function checkIntegrity() {
+    var footer = document.getElementById('jdh-copyright-footer');
+    var modal = document.getElementById('jdh-modal');
+    if (!footer || !modal) { blockApp(); return; }
+    var fs = window.getComputedStyle(footer);
+    if (fs.display === 'none' || fs.visibility === 'hidden' || fs.opacity === '0') {
+      footer.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important';
+    }
+  }
+
+  checkIntegrity();
+  setInterval(checkIntegrity, 3000);
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      m.removedNodes.forEach(function(node) {
+        if (node.id === 'jdh-copyright-footer' || node.id === 'jdh-modal') {
+          blockApp();
+        }
+      });
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+
+</body>
+</html>
