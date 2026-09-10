@@ -367,6 +367,17 @@ audio { width: 100%; margin-top: 12px; }
     <button class="primary" id="beoordeelBtn" onclick="beoordeel()" data-i18n="assessBtn">Laat beoordelen</button>
     <div class="status" id="statusBeoordeel"></div>
 
+    <details style="margin-top:10px">
+      <summary style="cursor:pointer;font-size:0.76rem;color:var(--paper-dim);padding:6px 0;list-style:none" data-i18n="manualToggleLabel">🔀 Gemini te druk? Gebruik een andere AI-app</summary>
+      <div style="margin-top:8px;padding:12px;background:var(--ink2);border-radius:3px">
+        <div style="font-size:0.75rem;color:var(--paper-dim);margin-bottom:10px;line-height:1.5" data-i18n="manualExplain">Kopieer de beoordelingsopdracht, plak hem in een AI-app van je keuze (Claude, ChatGPT, Gemini-app, enz.), en plak het antwoord hieronder terug.</div>
+        <button class="secondary" style="margin-top:0" onclick="kopieerPrompt()" data-i18n="copyPromptBtn">📋 Kopieer beoordelingsopdracht</button>
+        <div class="status" id="statusHandmatig"></div>
+        <textarea id="handmatigAntwoord" data-i18n-placeholder="pasteBackPlaceholder" placeholder="Plak hier het antwoord van de AI-app…" style="min-height:90px;margin-top:10px"></textarea>
+        <button class="primary" onclick="verwerkHandmatigAntwoord()" data-i18n="processAnswerBtn">Verwerk antwoord</button>
+      </div>
+    </details>
+
     <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)">
       <div style="font-size:0.78rem;font-weight:600;color:var(--mark2);margin-bottom:4px" data-i18n="plotLabel">✒️ Plot (optioneel)</div>
       <div style="font-size:0.72rem;color:var(--paper-dim);margin-bottom:8px" data-i18n="plotHint">Schrijf hier eventueel je eigen vervolg op het verhaal. Dit telt niet mee in de beoordeling, maar kun je straks als apart hoofdstuk aan het luisterboek toevoegen.</div>
@@ -511,7 +522,15 @@ const UI_TR = {
     plotHint: 'Schrijf hier eventueel je eigen vervolg op het verhaal. Dit telt niet mee in de beoordeling, maar kun je straks als apart hoofdstuk aan het luisterboek toevoegen.',
     plotPlaceholder: 'Schrijf hier eventueel je eigen plot/vervolg…',
     plotIncludeLabel: 'Plot meenemen als apart hoofdstuk in het mp3-bestand',
-    errOffline: '⚠️ Geen internetverbinding — dit onderdeel heeft internet nodig.'
+    errOffline: '⚠️ Geen internetverbinding — dit onderdeel heeft internet nodig.',
+    manualToggleLabel: '🔀 Gemini te druk? Gebruik een andere AI-app',
+    manualExplain: 'Kopieer de beoordelingsopdracht, plak hem in een AI-app van je keuze (Claude, ChatGPT, Gemini-app, enz.), en plak het antwoord hieronder terug.',
+    copyPromptBtn: '📋 Kopieer beoordelingsopdracht',
+    pasteBackPlaceholder: 'Plak hier het antwoord van de AI-app…',
+    processAnswerBtn: 'Verwerk antwoord',
+    promptGekopieerd: '✅ Gekopieerd — plak in je AI-app.',
+    promptKopieerFout: '❌ Kopiëren mislukt — selecteer en kopieer de tekst handmatig.',
+    errNoAnswer: '⚠️ Plak eerst het antwoord van de AI-app.'
   },
   en: {
     tagline: 'read · retell · listen back',
@@ -564,7 +583,15 @@ const UI_TR = {
     plotHint: 'Optionally write your own continuation of the story here. This does not count towards the assessment, but you can add it later as a separate chapter to the audiobook.',
     plotPlaceholder: 'Optionally write your own plot/continuation here…',
     plotIncludeLabel: 'Include the plot as a separate chapter in the mp3 file',
-    errOffline: '⚠️ No internet connection — this part needs internet.'
+    errOffline: '⚠️ No internet connection — this part needs internet.',
+    manualToggleLabel: '🔀 Gemini too busy? Use another AI app',
+    manualExplain: 'Copy the assessment prompt, paste it into an AI app of your choice (Claude, ChatGPT, Gemini app, etc.), and paste the answer back below.',
+    copyPromptBtn: '📋 Copy assessment prompt',
+    pasteBackPlaceholder: 'Paste the AI app’s answer here…',
+    processAnswerBtn: 'Process answer',
+    promptGekopieerd: '✅ Copied — paste it into your AI app.',
+    promptKopieerFout: '❌ Copy failed — select and copy the text manually.',
+    errNoAnswer: '⚠️ Paste the AI app’s answer first.'
   },
   de: {
     tagline: 'lesen · nacherzählen · anhören',
@@ -617,7 +644,15 @@ const UI_TR = {
     plotHint: 'Schreibe hier optional deine eigene Fortsetzung der Geschichte. Das zählt nicht zur Bewertung, kann aber später als eigenes Kapitel zum Hörbuch hinzugefügt werden.',
     plotPlaceholder: 'Schreibe hier optional deinen eigenen Plot/deine Fortsetzung…',
     plotIncludeLabel: 'Plot als eigenes Kapitel in die MP3-Datei aufnehmen',
-    errOffline: '⚠️ Keine Internetverbindung — dieser Teil benötigt Internet.'
+    errOffline: '⚠️ Keine Internetverbindung — dieser Teil benötigt Internet.',
+    manualToggleLabel: '🔀 Gemini zu ausgelastet? Andere AI-App nutzen',
+    manualExplain: 'Kopiere den Bewertungsauftrag, füge ihn in eine AI-App deiner Wahl ein (Claude, ChatGPT, Gemini-App usw.) und füge die Antwort unten wieder ein.',
+    copyPromptBtn: '📋 Bewertungsauftrag kopieren',
+    pasteBackPlaceholder: 'Füge hier die Antwort der AI-App ein…',
+    processAnswerBtn: 'Antwort verarbeiten',
+    promptGekopieerd: '✅ Kopiert — füge es in deine AI-App ein.',
+    promptKopieerFout: '❌ Kopieren fehlgeschlagen — markiere und kopiere den Text manuell.',
+    errNoAnswer: '⚠️ Füge zuerst die Antwort der AI-App ein.'
   },
   fr: {
     tagline: 'lire · raconter · réécouter',
@@ -670,7 +705,15 @@ const UI_TR = {
     plotHint: 'Écris ici, si tu veux, ta propre suite de l’histoire. Cela ne compte pas dans l’évaluation, mais tu pourras l’ajouter plus tard comme chapitre séparé au livre audio.',
     plotPlaceholder: 'Écris ici, si tu veux, ta propre suite…',
     plotIncludeLabel: 'Inclure l’intrigue comme chapitre séparé dans le fichier mp3',
-    errOffline: '⚠️ Pas de connexion internet — cette partie nécessite internet.'
+    errOffline: '⚠️ Pas de connexion internet — cette partie nécessite internet.',
+    manualToggleLabel: '🔀 Gemini trop occupé ? Utilise une autre appli IA',
+    manualExplain: 'Copie la consigne d’évaluation, colle-la dans une appli IA de ton choix (Claude, ChatGPT, appli Gemini, etc.), puis colle la réponse ci-dessous.',
+    copyPromptBtn: '📋 Copier la consigne d’évaluation',
+    pasteBackPlaceholder: 'Colle ici la réponse de l’appli IA…',
+    processAnswerBtn: 'Traiter la réponse',
+    promptGekopieerd: '✅ Copié — colle-le dans ton appli IA.',
+    promptKopieerFout: '❌ Copie échouée — sélectionne et copie le texte manuellement.',
+    errNoAnswer: '⚠️ Colle d’abord la réponse de l’appli IA.'
   },
   es: {
     tagline: 'lee · vuelve a contar · escucha',
@@ -723,7 +766,15 @@ const UI_TR = {
     plotHint: 'Escribe aquí, si quieres, tu propia continuación de la historia. Esto no cuenta para la evaluación, pero podrás añadirlo luego como capítulo aparte al audiolibro.',
     plotPlaceholder: 'Escribe aquí, si quieres, tu propia trama/continuación…',
     plotIncludeLabel: 'Incluir la trama como capítulo aparte en el archivo mp3',
-    errOffline: '⚠️ Sin conexión a internet — esta parte necesita internet.'
+    errOffline: '⚠️ Sin conexión a internet — esta parte necesita internet.',
+    manualToggleLabel: '🔀 ¿Gemini muy saturado? Usa otra app de IA',
+    manualExplain: 'Copia la consigna de evaluación, pégala en una app de IA de tu elección (Claude, ChatGPT, app de Gemini, etc.) y pega la respuesta aquí abajo.',
+    copyPromptBtn: '📋 Copiar consigna de evaluación',
+    pasteBackPlaceholder: 'Pega aquí la respuesta de la app de IA…',
+    processAnswerBtn: 'Procesar respuesta',
+    promptGekopieerd: '✅ Copiado — pégalo en tu app de IA.',
+    promptKopieerFout: '❌ Error al copiar — selecciona y copia el texto manualmente.',
+    errNoAnswer: '⚠️ Pega primero la respuesta de la app de IA.'
   },
   it: {
     tagline: 'leggi · racconta · riascolta',
@@ -776,7 +827,15 @@ const UI_TR = {
     plotHint: 'Scrivi qui, se vuoi, un tuo seguito della storia. Non conta per la valutazione, ma potrai aggiungerlo poi come capitolo separato all’audiolibro.',
     plotPlaceholder: 'Scrivi qui, se vuoi, la tua trama/il tuo seguito…',
     plotIncludeLabel: 'Includi la trama come capitolo separato nel file mp3',
-    errOffline: '⚠️ Nessuna connessione internet — questa parte richiede internet.'
+    errOffline: '⚠️ Nessuna connessione internet — questa parte richiede internet.',
+    manualToggleLabel: '🔀 Gemini troppo occupato? Usa un’altra app AI',
+    manualExplain: 'Copia la consegna di valutazione, incollala in un’app AI a tua scelta (Claude, ChatGPT, app Gemini, ecc.) e incolla qui sotto la risposta.',
+    copyPromptBtn: '📋 Copia la consegna di valutazione',
+    pasteBackPlaceholder: 'Incolla qui la risposta dell’app AI…',
+    processAnswerBtn: 'Elabora risposta',
+    promptGekopieerd: '✅ Copiato — incollalo nella tua app AI.',
+    promptKopieerFout: '❌ Copia non riuscita — seleziona e copia il testo manualmente.',
+    errNoAnswer: '⚠️ Incolla prima la risposta dell’app AI.'
   }
 };
 
@@ -1004,6 +1063,45 @@ async function callGeminiText(prompt) {
   return text;
 }
 
+function bouwBeoordelingsPrompt(beschrijving) {
+  const taalLabel = TAAL_LABELS[schrijfTaal] || schrijfTaal;
+  const feedbackTaal = TAAL_LABELS[uiLang];
+  return `Je bent een vriendelijke maar eerlijke leesbegeleider. Hier is een brontekst en een beschrijving die een lezer ervan gaf in eigen woorden (taal van de beschrijving: ${taalLabel}).
+
+BRONTEKST:
+"""${huidigeTekst.tekst}"""
+
+BESCHRIJVING VAN DE LEZER:
+"""${beschrijving}"""
+
+Geef antwoord in exact dit format, zonder markdown-opmaak. Schrijf de tekst na FEEDBACK: en VERVOLGVRAAG: in het ${feedbackTaal}:
+SCORE: [cijfer 1-10]
+FEEDBACK: [2-4 zinnen, concreet: welke kernpunten zijn er, wat mist er of klopt niet, en — alleen als de beschrijving niet in het Nederlands is geschreven — een korte opmerking over taalvaardigheid, apart van de begripsscore]
+VERVOLGVRAAG: [één specifieke vraag over een klein detail uit de brontekst dat NIET in een generieke samenvatting zou staan — bv. een naam, kleur, geur, terloopse opmerking — om te checken of de tekst echt gelezen is]`;
+}
+
+function verwerkBeoordelingsAntwoord(antwoord, beschrijving) {
+  const scoreMatch = antwoord.match(/SCORE:\s*(\d+)/i);
+  const feedbackMatch = antwoord.match(/FEEDBACK:\s*([\s\S]*?)VERVOLGVRAAG:/i);
+  const vraagMatch = antwoord.match(/VERVOLGVRAAG:\s*([\s\S]*)/i);
+
+  const score = scoreMatch ? scoreMatch[1] : '?';
+  const feedback = feedbackMatch ? feedbackMatch[1].trim() : antwoord;
+  const vervolgvraag = vraagMatch ? vraagMatch[1].trim() : null;
+
+  laatsteBeoordeling = { score, feedback, vervolgvraag, beschrijving };
+
+  document.getElementById('scoreBadge').innerHTML = `<span class="score-badge">${T('scoreLabel', score)}</span>`;
+  document.getElementById('beoordelingTekst').textContent = feedback;
+  document.getElementById('resultCard').classList.remove('hidden');
+  document.getElementById('audioCard').classList.remove('hidden');
+
+  if (vervolgvraag) {
+    document.getElementById('vervolgvraagTekst').textContent = '❓ ' + vervolgvraag;
+    document.getElementById('vervolgBlok').classList.remove('hidden');
+  }
+}
+
 async function beoordeel() {
   const apiKey = getKey();
   if (!apiKey) {
@@ -1020,53 +1118,41 @@ async function beoordeel() {
   btn.disabled = true;
   setStatusEl('statusBeoordeel', T('statusAssessing'), 'active');
 
-  const taalLabel = TAAL_LABELS[schrijfTaal] || schrijfTaal;
-  const feedbackTaal = TAAL_LABELS[uiLang];
-
-  const prompt = `Je bent een vriendelijke maar eerlijke leesbegeleider. Hier is een brontekst en een beschrijving die een lezer ervan gaf in eigen woorden (taal van de beschrijving: ${taalLabel}).
-
-BRONTEKST:
-"""${huidigeTekst.tekst}"""
-
-BESCHRIJVING VAN DE LEZER:
-"""${beschrijving}"""
-
-Geef antwoord in exact dit format, zonder markdown-opmaak. Schrijf de tekst na FEEDBACK: en VERVOLGVRAAG: in het ${feedbackTaal}:
-SCORE: [cijfer 1-10]
-FEEDBACK: [2-4 zinnen, concreet: welke kernpunten zijn er, wat mist er of klopt niet, en — alleen als de beschrijving niet in het Nederlands is geschreven — een korte opmerking over taalvaardigheid, apart van de begripsscore]
-VERVOLGVRAAG: [één specifieke vraag over een klein detail uit de brontekst dat NIET in een generieke samenvatting zou staan — bv. een naam, kleur, geur, terloopse opmerking — om te checken of de tekst echt gelezen is]`;
+  const prompt = bouwBeoordelingsPrompt(beschrijving);
 
   try {
     const antwoord = await metRetry(
       () => callGeminiText(prompt),
       (poging, totaal, wacht) => setStatusEl('statusBeoordeel', T('retryAssess', poging, totaal, Math.round(wacht/1000)), 'active')
     );
-    const scoreMatch = antwoord.match(/SCORE:\s*(\d+)/i);
-    const feedbackMatch = antwoord.match(/FEEDBACK:\s*([\s\S]*?)VERVOLGVRAAG:/i);
-    const vraagMatch = antwoord.match(/VERVOLGVRAAG:\s*([\s\S]*)/i);
-
-    const score = scoreMatch ? scoreMatch[1] : '?';
-    const feedback = feedbackMatch ? feedbackMatch[1].trim() : antwoord;
-    const vervolgvraag = vraagMatch ? vraagMatch[1].trim() : null;
-
-    laatsteBeoordeling = { score, feedback, vervolgvraag, beschrijving };
-
-    document.getElementById('scoreBadge').innerHTML = `<span class="score-badge">${T('scoreLabel', score)}</span>`;
-    document.getElementById('beoordelingTekst').textContent = feedback;
-    document.getElementById('resultCard').classList.remove('hidden');
-    document.getElementById('audioCard').classList.remove('hidden');
-
-    if (vervolgvraag) {
-      document.getElementById('vervolgvraagTekst').textContent = '❓ ' + vervolgvraag;
-      document.getElementById('vervolgBlok').classList.remove('hidden');
-    }
-
+    verwerkBeoordelingsAntwoord(antwoord, beschrijving);
     setStatusEl('statusBeoordeel', T('statusAssessed'), 'done');
   } catch (e) {
     setStatusEl('statusBeoordeel', '❌ ' + e.message, 'error');
     console.error(e);
   }
   btn.disabled = false;
+}
+
+async function kopieerPrompt() {
+  if (!huidigeTekst) { setStatusEl('statusHandmatig', T('errNoText'), 'error'); return; }
+  const beschrijving = document.getElementById('beschrijving').value.trim();
+  if (!beschrijving) { setStatusEl('statusHandmatig', T('errNoDescription'), 'error'); return; }
+  const prompt = bouwBeoordelingsPrompt(beschrijving);
+  try {
+    await navigator.clipboard.writeText(prompt);
+    setStatusEl('statusHandmatig', T('promptGekopieerd'), 'done');
+  } catch (e) {
+    setStatusEl('statusHandmatig', T('promptKopieerFout'), 'error');
+  }
+}
+
+function verwerkHandmatigAntwoord() {
+  const antwoord = document.getElementById('handmatigAntwoord').value.trim();
+  if (!antwoord) { setStatusEl('statusHandmatig', T('errNoAnswer'), 'error'); return; }
+  const beschrijving = document.getElementById('beschrijving').value.trim();
+  verwerkBeoordelingsAntwoord(antwoord, beschrijving);
+  setStatusEl('statusHandmatig', T('statusAssessed'), 'done');
 }
 
 async function beoordeelVervolg() {
