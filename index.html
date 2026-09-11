@@ -371,7 +371,10 @@ audio { width: 100%; margin-top: 12px; }
       <summary style="cursor:pointer;font-size:0.76rem;color:var(--paper-dim);padding:6px 0;list-style:none" data-i18n="manualToggleLabel">🔀 Gemini te druk? Gebruik een andere AI-app</summary>
       <div style="margin-top:8px;padding:12px;background:var(--ink2);border-radius:3px">
         <div style="font-size:0.75rem;color:var(--paper-dim);margin-bottom:10px;line-height:1.5" data-i18n="manualExplain">Kopieer de beoordelingsopdracht, plak hem in een AI-app van je keuze (Claude, ChatGPT, Gemini-app, enz.), en plak het antwoord hieronder terug.</div>
-        <button class="secondary" style="margin-top:0" onclick="kopieerPrompt()" data-i18n="copyPromptBtn">📋 Kopieer beoordelingsopdracht</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="secondary" style="margin-top:0;flex:1" onclick="kopieerPrompt()" data-i18n="copyPromptBtn">📋 Kopieer beoordelingsopdracht</button>
+          <button class="secondary hidden" id="deelPromptBtn" style="margin-top:0;flex:1" onclick="deelPrompt()" data-i18n="sharePromptBtn">📤 Deel met AI-app</button>
+        </div>
         <div class="status" id="statusHandmatig"></div>
         <textarea id="handmatigAntwoord" data-i18n-placeholder="pasteBackPlaceholder" placeholder="Plak hier het antwoord van de AI-app…" style="min-height:90px;margin-top:10px"></textarea>
         <button class="primary" onclick="verwerkHandmatigAntwoord()" data-i18n="processAnswerBtn">Verwerk antwoord</button>
@@ -407,6 +410,20 @@ audio { width: 100%; margin-top: 12px; }
     <div class="status" id="statusAudio"></div>
     <audio id="audioPlayer" controls class="hidden"></audio>
     <button class="secondary hidden" id="downloadBtn" onclick="downloadAudio()" data-i18n="downloadBtn">⬇ Download mp3</button>
+
+    <div id="ttsFallbackBlok" class="hidden" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)">
+      <div style="font-size:0.72rem;color:var(--paper-dim);margin-bottom:8px" data-i18n="ttsFallbackNote">Gemini laat het even afweten. Je kunt het verhaal wel meteen laten voorlezen met de stem van dit toestel — let op: dat is alleen om te beluisteren (geen bestand), en niet geschikt om te delen of voor de competitie, omdat elk toestel een andere stem gebruikt.</div>
+      <div style="display:flex;gap:8px">
+        <button class="secondary" style="margin-top:0;flex:1" onclick="voorlezenMetToestelstem()" data-i18n="ttsFallbackBtn">🔊 Voorlezen met toestel-stem</button>
+        <button class="secondary" style="margin-top:0;flex:0 0 auto;padding:12px 16px" onclick="stopVoorlezen()" data-i18n="stopVoorlezenBtn">⏹</button>
+      </div>
+      <div style="font-size:0.72rem;color:var(--paper-dim);margin:12px 0 8px" data-i18n="ttsTekstBewarenTip">Tip: bewaar de tekst, dan kun je het later nog eens proberen — of gebruik een andere app die van tekst een mp3 kan maken.</div>
+      <div style="display:flex;gap:8px">
+        <button class="secondary" style="margin-top:0;flex:1" onclick="kopieerVerhaalTekst()" data-i18n="copyTekstBtn">📋 Kopieer tekst</button>
+        <button class="secondary hidden" id="deelTekstBtn" style="margin-top:0;flex:1" onclick="deelVerhaalTekst()" data-i18n="shareTekstBtn">📤 Deel tekst</button>
+      </div>
+      <div class="status" id="statusTtsFallback"></div>
+    </div>
   </div>
 
 
@@ -530,7 +547,19 @@ const UI_TR = {
     processAnswerBtn: 'Verwerk antwoord',
     promptGekopieerd: '✅ Gekopieerd — plak in je AI-app.',
     promptKopieerFout: '❌ Kopiëren mislukt — selecteer en kopieer de tekst handmatig.',
-    errNoAnswer: '⚠️ Plak eerst het antwoord van de AI-app.'
+    errNoAnswer: '⚠️ Plak eerst het antwoord van de AI-app.',
+    sharePromptBtn: '📤 Deel met AI-app',
+    ttsFallbackNote: 'Gemini laat het even afweten. Je kunt het verhaal wel meteen laten voorlezen met de stem van dit toestel — let op: dat is alleen om te beluisteren (geen bestand), en niet geschikt om te delen of voor de competitie, omdat elk toestel een andere stem gebruikt.',
+    ttsFallbackBtn: '🔊 Voorlezen met toestel-stem',
+    stopVoorlezenBtn: '⏹',
+    ttsFallbackNietOndersteund: '⚠️ Dit toestel ondersteunt geen ingebouwde spraaksynthese.',
+    statusVoorlezenToestel: '🔊 Wordt voorgelezen met de stem van dit toestel…',
+    statusVoorlezenKlaar: '✅ Klaar met voorlezen.',
+    statusVoorlezenFout: '❌ Voorlezen is mislukt.',
+    ttsTekstBewarenTip: 'Tip: bewaar de tekst, dan kun je het later nog eens proberen — of gebruik een andere app die van tekst een mp3 kan maken.',
+    copyTekstBtn: '📋 Kopieer tekst',
+    shareTekstBtn: '📤 Deel tekst',
+    tekstGekopieerd: '✅ Tekst gekopieerd — plak hem ergens om te bewaren.'
   },
   en: {
     tagline: 'read · retell · listen back',
@@ -591,7 +620,19 @@ const UI_TR = {
     processAnswerBtn: 'Process answer',
     promptGekopieerd: '✅ Copied — paste it into your AI app.',
     promptKopieerFout: '❌ Copy failed — select and copy the text manually.',
-    errNoAnswer: '⚠️ Paste the AI app’s answer first.'
+    errNoAnswer: '⚠️ Paste the AI app’s answer first.',
+    sharePromptBtn: '📤 Share with AI app',
+    ttsFallbackNote: 'Gemini is unavailable right now. You can still have the story read aloud using this device’s own voice — note: this is playback only (no file), and not suitable for sharing or the competition, since every device uses a different voice.',
+    ttsFallbackBtn: '🔊 Read aloud with device voice',
+    stopVoorlezenBtn: '⏹',
+    ttsFallbackNietOndersteund: '⚠️ This device does not support built-in speech synthesis.',
+    statusVoorlezenToestel: '🔊 Reading aloud with this device’s voice…',
+    statusVoorlezenKlaar: '✅ Finished reading aloud.',
+    statusVoorlezenFout: '❌ Reading aloud failed.',
+    ttsTekstBewarenTip: 'Tip: save the text so you can try again later — or share it with another app that can turn text into an mp3.',
+    copyTekstBtn: '📋 Copy text',
+    shareTekstBtn: '📤 Share text',
+    tekstGekopieerd: '✅ Text copied — paste it somewhere to save it.'
   },
   de: {
     tagline: 'lesen · nacherzählen · anhören',
@@ -652,7 +693,19 @@ const UI_TR = {
     processAnswerBtn: 'Antwort verarbeiten',
     promptGekopieerd: '✅ Kopiert — füge es in deine AI-App ein.',
     promptKopieerFout: '❌ Kopieren fehlgeschlagen — markiere und kopiere den Text manuell.',
-    errNoAnswer: '⚠️ Füge zuerst die Antwort der AI-App ein.'
+    errNoAnswer: '⚠️ Füge zuerst die Antwort der AI-App ein.',
+    sharePromptBtn: '📤 Mit AI-App teilen',
+    ttsFallbackNote: 'Gemini ist gerade nicht erreichbar. Du kannst dir die Geschichte trotzdem sofort mit der Stimme dieses Geräts vorlesen lassen — Hinweis: das ist nur zum Anhören (keine Datei) und nicht für Weitergabe oder den Wettbewerb geeignet, da jedes Gerät eine andere Stimme nutzt.',
+    ttsFallbackBtn: '🔊 Mit Gerätestimme vorlesen',
+    stopVoorlezenBtn: '⏹',
+    ttsFallbackNietOndersteund: '⚠️ Dieses Gerät unterstützt keine integrierte Sprachsynthese.',
+    statusVoorlezenToestel: '🔊 Wird mit der Stimme dieses Geräts vorgelesen…',
+    statusVoorlezenKlaar: '✅ Vorlesen fertig.',
+    statusVoorlezenFout: '❌ Vorlesen fehlgeschlagen.',
+    ttsTekstBewarenTip: 'Tipp: Speichere den Text, dann kannst du es später noch einmal versuchen — oder nutze eine andere App, die aus Text ein MP3 erstellen kann.',
+    copyTekstBtn: '📋 Text kopieren',
+    shareTekstBtn: '📤 Text teilen',
+    tekstGekopieerd: '✅ Text kopiert — füge ihn irgendwo ein, um ihn zu speichern.'
   },
   fr: {
     tagline: 'lire · raconter · réécouter',
@@ -713,7 +766,19 @@ const UI_TR = {
     processAnswerBtn: 'Traiter la réponse',
     promptGekopieerd: '✅ Copié — colle-le dans ton appli IA.',
     promptKopieerFout: '❌ Copie échouée — sélectionne et copie le texte manuellement.',
-    errNoAnswer: '⚠️ Colle d’abord la réponse de l’appli IA.'
+    errNoAnswer: '⚠️ Colle d’abord la réponse de l’appli IA.',
+    sharePromptBtn: '📤 Partager avec une appli IA',
+    ttsFallbackNote: 'Gemini est indisponible pour le moment. Tu peux quand même faire lire l’histoire à voix haute avec la voix de cet appareil — attention : c’est uniquement pour écouter (pas de fichier), et ce n’est pas adapté pour le partage ou la compétition, car chaque appareil utilise une voix différente.',
+    ttsFallbackBtn: '🔊 Lire avec la voix de l’appareil',
+    stopVoorlezenBtn: '⏹',
+    ttsFallbackNietOndersteund: '⚠️ Cet appareil ne prend pas en charge la synthèse vocale intégrée.',
+    statusVoorlezenToestel: '🔊 Lecture en cours avec la voix de cet appareil…',
+    statusVoorlezenKlaar: '✅ Lecture terminée.',
+    statusVoorlezenFout: '❌ La lecture a échoué.',
+    ttsTekstBewarenTip: 'Astuce : sauvegarde le texte pour réessayer plus tard — ou partage-le avec une autre appli capable de transformer du texte en mp3.',
+    copyTekstBtn: '📋 Copier le texte',
+    shareTekstBtn: '📤 Partager le texte',
+    tekstGekopieerd: '✅ Texte copié — colle-le quelque part pour le conserver.'
   },
   es: {
     tagline: 'lee · vuelve a contar · escucha',
@@ -774,7 +839,19 @@ const UI_TR = {
     processAnswerBtn: 'Procesar respuesta',
     promptGekopieerd: '✅ Copiado — pégalo en tu app de IA.',
     promptKopieerFout: '❌ Error al copiar — selecciona y copia el texto manualmente.',
-    errNoAnswer: '⚠️ Pega primero la respuesta de la app de IA.'
+    errNoAnswer: '⚠️ Pega primero la respuesta de la app de IA.',
+    sharePromptBtn: '📤 Compartir con app de IA',
+    ttsFallbackNote: 'Gemini no está disponible ahora mismo. Aun así puedes hacer que se lea la historia en voz alta con la voz de este dispositivo — atención: esto es solo para escuchar (no genera un archivo) y no es adecuado para compartir o para la competición, ya que cada dispositivo usa una voz distinta.',
+    ttsFallbackBtn: '🔊 Leer en voz alta con la voz del dispositivo',
+    stopVoorlezenBtn: '⏹',
+    ttsFallbackNietOndersteund: '⚠️ Este dispositivo no admite síntesis de voz integrada.',
+    statusVoorlezenToestel: '🔊 Leyendo en voz alta con la voz de este dispositivo…',
+    statusVoorlezenKlaar: '✅ Lectura en voz alta terminada.',
+    statusVoorlezenFout: '❌ La lectura en voz alta falló.',
+    ttsTekstBewarenTip: 'Consejo: guarda el texto para volver a intentarlo más tarde, o compártelo con otra app que pueda convertir texto en mp3.',
+    copyTekstBtn: '📋 Copiar texto',
+    shareTekstBtn: '📤 Compartir texto',
+    tekstGekopieerd: '✅ Texto copiado — pégalo en algún sitio para guardarlo.'
   },
   it: {
     tagline: 'leggi · racconta · riascolta',
@@ -835,7 +912,19 @@ const UI_TR = {
     processAnswerBtn: 'Elabora risposta',
     promptGekopieerd: '✅ Copiato — incollalo nella tua app AI.',
     promptKopieerFout: '❌ Copia non riuscita — seleziona e copia il testo manualmente.',
-    errNoAnswer: '⚠️ Incolla prima la risposta dell’app AI.'
+    errNoAnswer: '⚠️ Incolla prima la risposta dell’app AI.',
+    sharePromptBtn: '📤 Condividi con app AI',
+    ttsFallbackNote: 'Gemini non è disponibile al momento. Puoi comunque farti leggere subito la storia con la voce di questo dispositivo — attenzione: serve solo per ascoltare (nessun file) e non è adatto per la condivisione o la competizione, poiché ogni dispositivo usa una voce diversa.',
+    ttsFallbackBtn: '🔊 Leggi ad alta voce con la voce del dispositivo',
+    stopVoorlezenBtn: '⏹',
+    ttsFallbackNietOndersteund: '⚠️ Questo dispositivo non supporta la sintesi vocale integrata.',
+    statusVoorlezenToestel: '🔊 Lettura ad alta voce con la voce di questo dispositivo…',
+    statusVoorlezenKlaar: '✅ Lettura ad alta voce terminata.',
+    statusVoorlezenFout: '❌ La lettura ad alta voce non è riuscita.',
+    ttsTekstBewarenTip: 'Suggerimento: salva il testo per riprovare più tardi, oppure condividilo con un’altra app in grado di trasformare il testo in mp3.',
+    copyTekstBtn: '📋 Copia testo',
+    shareTekstBtn: '📤 Condividi testo',
+    tekstGekopieerd: '✅ Testo copiato — incollalo da qualche parte per salvarlo.'
   }
 };
 
@@ -1147,12 +1236,75 @@ async function kopieerPrompt() {
   }
 }
 
+async function deelPrompt() {
+  if (!huidigeTekst) { setStatusEl('statusHandmatig', T('errNoText'), 'error'); return; }
+  const beschrijving = document.getElementById('beschrijving').value.trim();
+  if (!beschrijving) { setStatusEl('statusHandmatig', T('errNoDescription'), 'error'); return; }
+  const prompt = bouwBeoordelingsPrompt(beschrijving);
+  try {
+    await navigator.share({ text: prompt });
+  } catch (e) {
+    // Gebruiker annuleerde het deelvenster — geen foutmelding nodig
+  }
+}
+
 function verwerkHandmatigAntwoord() {
   const antwoord = document.getElementById('handmatigAntwoord').value.trim();
   if (!antwoord) { setStatusEl('statusHandmatig', T('errNoAnswer'), 'error'); return; }
   const beschrijving = document.getElementById('beschrijving').value.trim();
   verwerkBeoordelingsAntwoord(antwoord, beschrijving);
   setStatusEl('statusHandmatig', T('statusAssessed'), 'done');
+}
+
+// ── Noodgreep: voorlezen met de TTS van het toestel zelf, als Gemini het laat afweten ──
+// Levert géén downloadbaar bestand op (kan technisch niet met browser-TTS) en is niet
+// geschikt voor delen/competitie, omdat elk toestel een andere stem gebruikt.
+const TAAL_BCP47 = { nl: 'nl-NL', en: 'en-US', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT' };
+
+function voorlezenMetToestelstem() {
+  if (!('speechSynthesis' in window)) { setStatusEl('statusAudio', T('ttsFallbackNietOndersteund'), 'error'); return; }
+  const beschrijving = document.getElementById('beschrijving').value.trim();
+  if (!beschrijving) return;
+  const plotTekst = document.getElementById('plotTekst').value.trim();
+  const plotMeenemen = plotTekst && document.getElementById('plotMeenemen').checked;
+  const volledigeTekst = plotMeenemen ? `${beschrijving}. . . ${plotTekst}` : beschrijving;
+
+  speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(volledigeTekst);
+  utter.lang = TAAL_BCP47[schrijfTaal] || 'nl-NL';
+  utter.onstart = () => setStatusEl('statusAudio', T('statusVoorlezenToestel'), 'active');
+  utter.onend = () => setStatusEl('statusAudio', T('statusVoorlezenKlaar'), 'done');
+  utter.onerror = () => setStatusEl('statusAudio', T('statusVoorlezenFout'), 'error');
+  speechSynthesis.speak(utter);
+}
+
+function stopVoorlezen() {
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
+function volledigVerhaalTekst() {
+  const beschrijving = document.getElementById('beschrijving').value.trim();
+  const plotTekst = document.getElementById('plotTekst').value.trim();
+  const plotMeenemen = plotTekst && document.getElementById('plotMeenemen').checked;
+  const titel = huidigeTekst?.titel || '';
+  return plotMeenemen ? `${titel}\n\n${beschrijving}\n\n— Plot —\n${plotTekst}` : `${titel}\n\n${beschrijving}`;
+}
+
+async function kopieerVerhaalTekst() {
+  try {
+    await navigator.clipboard.writeText(volledigVerhaalTekst());
+    setStatusEl('statusTtsFallback', T('tekstGekopieerd'), 'done');
+  } catch (e) {
+    setStatusEl('statusTtsFallback', T('promptKopieerFout'), 'error');
+  }
+}
+
+async function deelVerhaalTekst() {
+  try {
+    await navigator.share({ text: volledigVerhaalTekst(), title: huidigeTekst?.titel || 'Beschrijf' });
+  } catch (e) {
+    // Gebruiker annuleerde het deelvenster — geen foutmelding nodig
+  }
 }
 
 async function beoordeelVervolg() {
@@ -1288,6 +1440,7 @@ async function maakAudio() {
   } catch (e) {
     setStatusEl('statusAudio', '❌ ' + e.message, 'error');
     console.error(e);
+    document.getElementById('ttsFallbackBlok').classList.remove('hidden');
   }
   btn.disabled = false;
 }
@@ -1427,6 +1580,10 @@ setUiTaal(uiLang);
 initTaalFilter();
 initTextChoice();
 loadKey();
+if (navigator.share) {
+  document.getElementById('deelPromptBtn').classList.remove('hidden');
+  document.getElementById('deelTekstBtn').classList.remove('hidden');
+}
 </script>
 
 <!-- ① ZICHTBARE FOOTER -->
